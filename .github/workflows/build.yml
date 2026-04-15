@@ -21,6 +21,7 @@ jobs:
         uses: Vampire/setup-wsl@v3
         with:
           distribution: Ubuntu-22.04
+          use-cache: 'false'
 
       # ── 第3步：在 Ubuntu 里安装 CP2K ──
       - name: 在 Ubuntu 中安装 CP2K
