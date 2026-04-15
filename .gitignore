@@ -1,0 +1,6 @@
+# 大文件不上传（由 GitHub Actions 自动生成）
+cp2k_distro.tar
+output/
+
+# macOS 系统文件
+.DS_Store

@@ -1,0 +1,93 @@
+name: 打包 CP2K Windows 安装程序
+
+on:
+  # 手动触发（在 GitHub 网页上点按钮就能运行）
+  workflow_dispatch:
+  # 每次推送代码自动运行
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest  # 使用 GitHub 提供的免费 Windows 虚拟机
+
+    steps:
+      # ── 第1步：下载代码 ──
+      - name: 下载代码
+        uses: actions/checkout@v4
+
+      # ── 第2步：设置 WSL2 + Ubuntu ──
+      - name: 安装 WSL2 和 Ubuntu
+        uses: Vampire/setup-wsl@v3
+        with:
+          distribution: Ubuntu-22.04
+          wsl-version: 2
+
+      # ── 第3步：在 Ubuntu 里安装 CP2K ──
+      - name: 在 Ubuntu 中安装 CP2K
+        shell: wsl-bash {0}
+        run: |
+          apt-get update -qq
+          apt-get install -y cp2k cp2k-data
+          # 验证安装成功
+          cp2k --version
+          echo "CP2K 安装成功"
+
+      # ── 第4步：导出 WSL 镜像 ──
+      - name: 导出 WSL 镜像
+        shell: powershell
+        run: |
+          Write-Host "正在导出 CP2K 环境（这一步需要几分钟）..."
+          wsl --export Ubuntu-22.04 cp2k_distro.tar
+          $size = [math]::Round((Get-Item cp2k_distro.tar).Length / 1GB, 2)
+          Write-Host "导出完成，文件大小: ${size} GB"
+
+      # ── 第5步：安装 Inno Setup 打包工具 ──
+      - name: 安装 Inno Setup
+        shell: powershell
+        run: |
+          choco install innosetup --yes --no-progress
+          # 确认安装路径
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (Test-Path $iscc) {
+            Write-Host "Inno Setup 安装成功: $iscc"
+          } else {
+            Write-Host "查找 Inno Setup..."
+            Get-ChildItem "C:\Program Files*" -Recurse -Filter "ISCC.exe" -ErrorAction SilentlyContinue
+          }
+
+      # ── 第6步：编译安装包 ──
+      - name: 编译 Windows 安装包
+        shell: powershell
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            $iscc = (Get-ChildItem "C:\Program Files*" -Recurse -Filter "ISCC.exe" -ErrorAction SilentlyContinue | Select-Object -First 1).FullName
+          }
+          Write-Host "使用 Inno Setup: $iscc"
+          & $iscc "installer\cp2k_setup.iss"
+          if ($LASTEXITCODE -ne 0) { throw "安装包编译失败" }
+          Write-Host "安装包编译成功！"
+
+      # ── 第7步：上传安装包（供下载）──
+      - name: 上传安装包
+        uses: actions/upload-artifact@v4
+        with:
+          name: CP2K-Windows-安装包
+          path: output/*.exe
+          retention-days: 30  # 保存 30 天
+
+      # ── 显示安装包信息 ──
+      - name: 显示安装包信息
+        shell: powershell
+        run: |
+          $exe = Get-ChildItem output\*.exe | Select-Object -First 1
+          if ($exe) {
+            $size = [math]::Round($exe.Length / 1MB, 1)
+            Write-Host "==========================================="
+            Write-Host " 打包成功！"
+            Write-Host " 文件名: $($exe.Name)"
+            Write-Host " 大小: ${size} MB"
+            Write-Host "==========================================="
+            Write-Host "请在 GitHub Actions 页面的 Artifacts 区域下载"
+          }
