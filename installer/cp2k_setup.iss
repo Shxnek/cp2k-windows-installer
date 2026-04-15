@@ -25,7 +25,7 @@ WizardImageFile=
 UninstallDisplayName=CP2K 量子化学计算软件
 
 [Languages]
-Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "chinesesimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "在桌面创建快捷方式"; GroupDescription: "附加任务:"; Flags: checkedonce
@@ -57,7 +57,7 @@ Filename: "wsl.exe"; \
 
 ; 添加到系统 PATH
 Filename: "powershell.exe"; \
-    Parameters: "-NoProfile -ExecutionPolicy Bypass -Command ""$p=[Environment]::GetEnvironmentVariable('Path','Machine'); if($p -notlike '*CP2K*'){[Environment]::SetEnvironmentVariable('Path',$p+';{app}','Machine')}"""; \
+    Parameters: "-NoProfile -ExecutionPolicy Bypass -Command ""$p=[Environment]::GetEnvironmentVariable('Path','Machine'); if($p -notlike '*CP2K*'){{[Environment]::SetEnvironmentVariable('Path',$p+';{app}','Machine')}}"""; \
     Flags: runhidden waituntilterminated
 
 [UninstallRun]
