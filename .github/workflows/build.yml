@@ -67,16 +67,15 @@ jobs:
 
       # ── 第6步：编译安装包 ──
       - name: 编译 Windows 安装包
-        shell: powershell
+        shell: cmd
         run: |
-          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
-          if (-not (Test-Path $iscc)) {
-            $iscc = (Get-ChildItem "C:\Program Files*" -Recurse -Filter "ISCC.exe" -ErrorAction SilentlyContinue | Select-Object -First 1).FullName
-          }
-          Write-Host "使用 Inno Setup: $iscc"
-          & $iscc "installer\cp2k_setup.iss"
-          if ($LASTEXITCODE -ne 0) { throw "安装包编译失败" }
-          Write-Host "安装包编译成功！"
+          mkdir output 2>nul
+          "%ProgramFiles(x86)%\Inno Setup 6\ISCC.exe" "installer\cp2k_setup.iss"
+          if errorlevel 1 (
+            echo 编译失败
+            exit /b 1
+          )
+          echo 编译成功
 
       # ── 第7步：上传安装包（供下载）──
       - name: 上传安装包
