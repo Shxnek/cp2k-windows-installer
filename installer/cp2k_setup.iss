@@ -62,7 +62,7 @@ var
 function InitializeSetup(): Boolean;
 var
   ResultCode: Integer;
-  FreeSpace, TotalSpace: Int64;
+  FreeSpace, TotalSpace: Cardinal;
 begin
   Result := True;
 
@@ -78,12 +78,13 @@ begin
   end;
 
   // 2. 磁盘空间（至少 6GB）
+  // InMegabytes=True，单位为 MB；6GB = 6144 MB
   GetSpaceOnDisk('C:\', True, FreeSpace, TotalSpace);
-  if FreeSpace < 6442450944 then begin
+  if FreeSpace < 6144 then begin
     if MsgBox(
       'C 盘可用空间不足' + #13#10 + #13#10 +
       '安装 CP2K 至少需要 6GB 可用空间。' + #13#10 +
-      '当前 C 盘剩余空间：' + IntToStr(FreeSpace div 1073741824) + ' GB' + #13#10 + #13#10 +
+      '当前 C 盘剩余空间：' + IntToStr(FreeSpace div 1024) + ' GB' + #13#10 + #13#10 +
       '建议清理磁盘后重试。是否仍要继续安装？',
       mbConfirmation, MB_YESNO) = IDNO then begin
       Result := False;
