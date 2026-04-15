@@ -1,4 +1,4 @@
-name: 打包 CP2K Windows 安装程序
+name: Build CP2K Windows Installer / 打包 CP2K Windows 安装程序
 
 on:
   # 手动触发（在 GitHub 网页上点按钮就能运行）
@@ -60,13 +60,13 @@ jobs:
           if (Test-Path $iscc) { Write-Host "Inno Setup 安装成功" } else { throw "Inno Setup 安装失败" }
 
       # ── 第5.5步：下载 Inno Setup 中文语言包 ──
-      - name: 下载中文语言包
+      - name: 下载中文语言包 / Download Chinese language pack
         shell: powershell
         run: |
           $dest = "C:\Program Files (x86)\Inno Setup 6\Languages\ChineseSimplified.isl"
           $url  = "https://raw.githubusercontent.com/jrsoftware/issrc/main/Files/Languages/Unofficial/ChineseSimplified.isl"
           Invoke-WebRequest -Uri $url -OutFile $dest -UseBasicParsing
-          if (Test-Path $dest) { Write-Host "中文语言包下载成功" } else { throw "下载失败" }
+          if (Test-Path $dest) { Write-Host "中文语言包下载成功 / Chinese language pack downloaded" } else { throw "下载失败 / Download failed" }
 
       # ── 第6步：编译安装包 ──
       - name: 编译 Windows 安装包

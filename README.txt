@@ -1,5 +1,49 @@
+CP2K Quantum Chemistry Software – Windows Edition
+==================================================
+
+[How to Run a Calculation]
+
+Method 1 (easiest):
+  Drag your .inp input file onto the "CP2K" desktop icon.
+
+Method 2 (command line):
+  Double-click the "CP2K" desktop icon to open a shell, then type:
+    cp2k -i yourfile.inp
+
+Method 3:
+  In the folder containing your input file, hold Shift and right-click
+  → "Open command window here", then type:
+    "C:\CP2K\run_cp2k.bat" yourfile.inp
+
+
+[Example Files]
+
+Example input files are located at: C:\CP2K\examples\
+
+
+[System Requirements]
+
+- Windows 10 (version 2004 or later) or Windows 11
+- At least 4 GB RAM
+- At least 10 GB disk space
+
+
+[How to Uninstall]
+
+Control Panel → Programs → Uninstall a program → CP2K → Uninstall
+
+
+[Get Help]
+
+CP2K official website : https://www.cp2k.org
+CP2K manual           : https://manual.cp2k.org
+
+
+════════════════════════════════════════════════════
+
+
 CP2K 量子化学计算软件 - Windows 版
-=====================================
+====================================
 
 【如何运行计算】
 

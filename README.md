@@ -1,3 +1,130 @@
+# CP2K Windows One-Click Installer
+
+> CP2K is a professional scientific software for quantum chemistry and solid-state physics simulations.
+> This project packages CP2K as a Windows one-click installer — no technical background required, just double-click to install.
+
+---
+
+## Download
+
+1. Click the **Actions** tab at the top of the page
+2. Click the latest entry with a green checkmark
+3. Scroll to the bottom and click the installer under **Artifacts**
+4. Unzip the `.zip` file to get `CP2K_2024_Windows_Setup.exe`
+5. Right-click → **Run as administrator** and follow the prompts
+
+> 💡 The installer is approximately 1–2 GB. Installation takes 3–5 minutes — please be patient.
+
+---
+
+## Installation Overview
+
+The installer guides you through the entire process — no manual steps needed. Built-in checks and prompts include:
+
+- **Pre-install checks**
+  - Windows version requirement (Win10 2004 or later)
+  - Sufficient disk space (at least 6 GB on C drive)
+  - WSL2 availability (enabled automatically if missing)
+
+- **Real-time progress**
+  - Step 1/3: Import CP2K runtime environment (~2–4 min)
+  - Step 2/3: Configure system environment variables
+  - Step 3/3: Clean up temporary files
+
+- **On failure**
+  - A dialog appears explaining the exact cause and recommended fix
+
+---
+
+## System Requirements
+
+| Item | Requirement |
+|------|-------------|
+| OS | Windows 10 (version 2004 or later) or Windows 11 |
+| RAM | 4 GB or more |
+| Disk space | At least 6 GB free on drive C |
+| Other | CPU must support virtualisation (enabled by default on most modern PCs) |
+
+> Not sure about your Windows version? Press `Win + R`, type `winver`, and press Enter.
+
+---
+
+## How to Use After Installation
+
+A **CP2K** shortcut will appear on your desktop after installation.
+
+**Method 1 (easiest): Drag and drop**
+- Drag your `.inp` input file onto the **CP2K desktop icon** — calculation starts automatically
+
+**Method 2: Command line**
+- Double-click the CP2K desktop icon to open a shell, then type:
+  ```
+  cp2k -i yourfile.inp
+  ```
+
+**Example files:** `C:\CP2K\examples\`
+
+---
+
+## FAQ
+
+**Q: The installer says "virtualisation needs to be enabled"?**
+Restart, press `Del` or `F2` to enter BIOS, find `Virtualization Technology`, set it to `Enabled`, save and restart.
+
+**Q: My antivirus flagged the installer — is it safe?**
+Temporarily disable real-time protection before installing, then re-enable it afterwards. WSL2 import operations are sometimes mis-flagged.
+
+**Q: Installation is stuck on "Importing runtime environment" — is that normal?**
+Yes — this step takes 2–4 minutes. Please wait and do not force-close the window.
+
+**Q: I downloaded a `.zip` file — where is the `.exe`?**
+GitHub wraps artifacts in `.zip`. Unzip it and the `.exe` installer is inside.
+
+**Q: How do I uninstall?**
+Control Panel → Programs → Uninstall a program → CP2K → Uninstall. All files are removed automatically.
+
+---
+
+## Build It Yourself
+
+To build from source (e.g. to update the CP2K version):
+
+1. Fork this repository
+2. Go to **Actions → Build CP2K Windows Installer**
+3. Click **Run workflow** on the right
+4. Wait ~20–30 minutes; download the result from the Artifacts section
+
+Completely free — GitHub provides 2,000 free build minutes per month.
+
+---
+
+## Project Structure
+
+```
+cp2k-windows-installer/
+├── .github/workflows/
+│   └── build.yml              # Automated build pipeline (GitHub Actions)
+├── installer/
+│   ├── cp2k_setup.iss         # Inno Setup installer script
+│   └── cp2k.ico               # Application icon
+├── scripts/
+│   ├── cp2k_shell.bat         # CP2K shell launcher
+│   ├── run_cp2k.bat           # Drag-and-drop run script
+│   └── uninstall_wsl.ps1      # Uninstall helper script
+└── README.md
+```
+
+---
+
+## Links
+
+- [CP2K Official Website](https://www.cp2k.org)
+- [CP2K Manual](https://manual.cp2k.org)
+- [CP2K Example Input Files](https://github.com/cp2k/cp2k/tree/master/tests)
+
+---
+---
+
 # CP2K Windows 一键安装包
 
 > CP2K 是一款用于量子化学和固体物理计算的专业科学软件。
@@ -10,7 +137,7 @@
 1. 点击页面顶部的 **Actions** 标签
 2. 点击最新一条带绿色勾的记录
 3. 拉到页面底部，点击 **Artifacts** 下的安装包下载
-4. 解压 `.zip` 文件，得到 `CP2K_2024_Windows安装包.exe`
+4. 解压 `.zip` 文件，得到 `CP2K_2024_Windows_Setup.exe`
 5. 右键 → **以管理员身份运行**，按提示完成安装
 
 > 💡 安装程序约 1-2 GB，安装过程需要 3-5 分钟，请耐心等待。
@@ -32,7 +159,7 @@
   - 步骤 3/3：清理临时文件
 
 - **安装失败时**
-  - 弹出中文提示，说明具体原因和解决步骤
+  - 弹出提示框，说明具体原因和解决步骤
 
 ---
 
@@ -103,13 +230,14 @@
 ```
 cp2k-windows-installer/
 ├── .github/workflows/
-│   └── build.yml          # 自动打包流程（GitHub Actions）
+│   └── build.yml              # 自动打包流程（GitHub Actions）
 ├── installer/
-│   └── cp2k_setup.iss     # Inno Setup 安装包脚本
+│   ├── cp2k_setup.iss         # Inno Setup 安装包脚本
+│   └── cp2k.ico               # 应用程序图标
 ├── scripts/
-│   ├── cp2k_shell.bat     # CP2K 命令行启动脚本
-│   ├── run_cp2k.bat       # 拖拽运行脚本
-│   └── uninstall_wsl.ps1  # 卸载辅助脚本
+│   ├── cp2k_shell.bat         # CP2K 命令行启动脚本
+│   ├── run_cp2k.bat           # 拖拽运行脚本
+│   └── uninstall_wsl.ps1      # 卸载辅助脚本
 └── README.md
 ```
 
