@@ -51,19 +51,13 @@ jobs:
           :success
           echo 导出成功！
 
-      # ── 第5步：安装 Inno Setup 打包工具 ──
+      # ── 第5步：安装 Inno Setup ──
       - name: 安装 Inno Setup
         shell: powershell
         run: |
           choco install innosetup --yes --no-progress
-          # 确认安装路径
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
-          if (Test-Path $iscc) {
-            Write-Host "Inno Setup 安装成功: $iscc"
-          } else {
-            Write-Host "查找 Inno Setup..."
-            Get-ChildItem "C:\Program Files*" -Recurse -Filter "ISCC.exe" -ErrorAction SilentlyContinue
-          }
+          if (Test-Path $iscc) { Write-Host "Inno Setup 安装成功" } else { throw "Inno Setup 安装失败" }
 
       # ── 第5.5步：下载 Inno Setup 中文语言包 ──
       - name: 下载中文语言包
@@ -71,13 +65,8 @@ jobs:
         run: |
           $dest = "C:\Program Files (x86)\Inno Setup 6\Languages\ChineseSimplified.isl"
           $url  = "https://raw.githubusercontent.com/jrsoftware/issrc/main/Files/Languages/Unofficial/ChineseSimplified.isl"
-          Write-Host "下载中文语言包..."
           Invoke-WebRequest -Uri $url -OutFile $dest -UseBasicParsing
-          if (Test-Path $dest) {
-            Write-Host "下载成功: $dest"
-          } else {
-            throw "下载失败，文件不存在"
-          }
+          if (Test-Path $dest) { Write-Host "中文语言包下载成功" } else { throw "下载失败" }
 
       # ── 第6步：编译安装包 ──
       - name: 编译 Windows 安装包

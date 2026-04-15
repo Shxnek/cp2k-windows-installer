@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <!-- 背景渐变：与原图一致的蓝色系 -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#2176CC"/>
+      <stop offset="100%" stop-color="#0D3A7A"/>
+    </linearGradient>
+    <!-- 顶部微光，增加立体感 -->
+    <linearGradient id="topshine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.15"/>
+      <stop offset="55%"  stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <!-- 轻微投影 -->
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8"
+                    flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- 圆角方形主体 -->
+  <rect x="0" y="0" width="512" height="512" rx="110" ry="110"
+        fill="url(#bg)" filter="url(#shadow)"/>
+
+  <!-- 顶部高光层 -->
+  <rect x="0" y="0" width="512" height="270" rx="110" ry="110"
+        fill="url(#topshine)"/>
+
+  <!-- 内描边（增加精致感） -->
+  <rect x="3" y="3" width="506" height="506" rx="108" ry="108"
+        fill="none" stroke="#ffffff" stroke-width="2" opacity="0.12"/>
+
+  <!-- "CP" 文字 -->
+  <text
+    x="256" y="286"
+    font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+    font-weight="900"
+    font-size="240"
+    fill="#FFFFFF"
+    text-anchor="middle"
+    dominant-baseline="auto"
+    letter-spacing="-6">CP</text>
+
+  <!-- 分隔线 -->
+  <rect x="72" y="302" width="368" height="5" rx="3"
+        fill="#ffffff" opacity="0.25"/>
+
+  <!-- "2K" 文字 -->
+  <text
+    x="256" y="440"
+    font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+    font-weight="900"
+    font-size="170"
+    fill="#ffffff"
+    text-anchor="middle"
+    dominant-baseline="auto"
+    letter-spacing="8"
+    opacity="0.92">2K</text>
+</svg>
