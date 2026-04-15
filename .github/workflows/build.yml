@@ -37,8 +37,20 @@ jobs:
       - name: 导出 WSL 镜像
         shell: powershell
         run: |
+          Write-Host "已安装的 WSL 发行版："
+          wsl -l -v
+
+          # 自动查找实际注册的发行版名称
+          $distroName = (wsl -l -q | Where-Object { $_ -match "Ubuntu" } | Select-Object -First 1).Trim()
+          $distroName = $distroName -replace "`0", ""  # 移除空字符
+          Write-Host "找到发行版: '$distroName'"
+
           Write-Host "正在导出 CP2K 环境（这一步需要几分钟）..."
-          wsl --export Ubuntu-22.04 cp2k_distro.tar
+          wsl --export "$distroName" cp2k_distro.tar
+
+          if (-not (Test-Path cp2k_distro.tar)) {
+            throw "导出失败，文件不存在"
+          }
           $size = [math]::Round((Get-Item cp2k_distro.tar).Length / 1GB, 2)
           Write-Host "导出完成，文件大小: ${size} GB"
 
