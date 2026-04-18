@@ -72,11 +72,16 @@ jobs:
           Write-Host "Detected CP2K version: $ver"
 
           # 替换 cp2k_shell.bat 中的版本号行
+          # 注意：必须用无 BOM 的 UTF-8 写入，否则 cmd.exe 读到 BOM 会导致 @echo off 失效
           $batPath = "scripts\cp2k_shell.bat"
-          (Get-Content $batPath -Encoding UTF8) `
-            -replace "Version / 版本: [^\r\n]*", "Version / 版本: $ver" |
-            Set-Content $batPath -Encoding UTF8
-          Write-Host "Version injected into $batPath successfully"
+          $content = (Get-Content $batPath -Encoding UTF8) `
+            -replace "Version / 版本: [^\r\n]*", "Version / 版本: $ver"
+          [System.IO.File]::WriteAllLines(
+            (Resolve-Path $batPath).Path,
+            $content,
+            [System.Text.UTF8Encoding]::new($false)   # $false = 不写 BOM
+          )
+          Write-Host "Version injected into $batPath successfully (UTF-8 no BOM)"
 
       # ── 第3.6步：清理 conda 缓存，减小镜像体积 ──
       - name: 清理缓存，减小镜像体积 / Clean up cache to reduce image size
