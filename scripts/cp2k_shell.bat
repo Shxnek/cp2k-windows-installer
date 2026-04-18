@@ -1,23 +1,25 @@
 @echo off
-REM CP2K 交互式命令行
+chcp 65001 >nul 2>&1
+REM CP2K interactive shell launcher
 
-title CP2K 命令行
+title CP2K Shell
 
 echo.
 echo  ============================================
+echo   CP2K Quantum Chemistry Software
 echo   CP2K 量子化学计算软件
-echo   版本: 2024
+echo   Version / 版本: 2024
 echo  ============================================
 echo.
-echo  常用命令:
-echo    cp2k -i 输入文件.inp          运行计算
-echo    cp2k -i 输入文件.inp ^> 输出.out  输出到文件
-echo    ls /usr/share/doc/cp2k/        查看示例
+echo  Common commands / 常用命令:
+echo    cp2k -i input.inp              Run calculation / 运行计算
+echo    cp2k -i input.inp ^> out.log    Save output / 输出到文件
 echo.
-echo  示例文件位置 (Windows): C:\CP2K\examples
-echo  示例文件位置 (Linux):   /mnt/c/CP2K/examples
+echo  Example files / 示例文件:
+echo    Windows : C:\CP2K\examples
+echo    Linux   : /mnt/c/CP2K/examples
 echo.
-echo  输入 exit 退出
+echo  Type "exit" to quit / 输入 exit 退出
 echo  ============================================
 echo.
 
