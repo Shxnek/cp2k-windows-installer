@@ -28,7 +28,7 @@ jobs:
         shell: wsl-bash {0}
         run: |
           apt-get update -qq
-          apt-get install -y libgomp1 wget
+          apt-get install -y libgomp1 wget bzip2
 
           # 下载官方预编译二进制（689 MB，OpenMP 并行版）
           echo "Downloading CP2K 2025.1 binary (~689 MB)..."
