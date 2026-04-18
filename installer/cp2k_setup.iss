@@ -221,12 +221,12 @@ procedure ShowRestartCountdown;
 var
   RC: Integer;
 begin
-  RestartSeconds      := 60;
+  RestartSeconds      := 5;
   RestartCancelledFlag := False;
 
-  // Schedule OS restart in 60 s (command returns immediately)
+  // Schedule OS restart in 5 s (command returns immediately)
   Exec('shutdown.exe',
-    '/r /t 60 /c "WSL2 enabled — restarting for CP2K setup."',
+    '/r /t 5 /c "WSL2 enabled — restarting for CP2K setup."',
     '', SW_HIDE, ewWaitUntilTerminated, RC);
 
   // Build the countdown dialog
