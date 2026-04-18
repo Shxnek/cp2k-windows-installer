@@ -1,7 +1,13 @@
 # CP2K Windows One-Click Installer
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CP2K Version](https://img.shields.io/badge/CP2K-2026.1-blue)](https://www.cp2k.org)
+[![Build](https://github.com/Shxnek/cp2k-windows-installer/actions/workflows/build.yml/badge.svg)](https://github.com/Shxnek/cp2k-windows-installer/actions/workflows/build.yml)
+
 > CP2K is a professional scientific software for quantum chemistry and solid-state physics simulations.
-> This project packages CP2K as a Windows one-click installer — no technical background required, just double-click to install.
+> This project packages CP2K **2026.1** (latest) as a Windows one-click installer — no technical background required, just double-click to install.
+>
+> Powered by **Ubuntu 24.04 WSL2 + conda-forge**.
 
 ---
 
@@ -9,11 +15,43 @@
 
 1. Click the **Actions** tab at the top of the page
 2. Click the latest entry with a green checkmark
-3. Scroll to the bottom and click the installer under **Artifacts**
-4. Unzip the `.zip` file to get `CP2K_2024_Windows_Setup.exe`
+3. Scroll to the bottom and click the installer under **Artifacts** → `CP2K-Windows-installer`
+4. Unzip the `.zip` file to get `CP2K_2026.1_Windows_Setup.exe`
 5. Right-click → **Run as administrator** and follow the prompts
 
 > 💡 The installer is approximately 1–2 GB. Installation takes 3–5 minutes — please be patient.
+
+---
+
+## When to Use This Installer
+
+This installer runs CP2K inside **WSL2 on a single Windows PC** — ideal for learning and testing, not for large-scale production.
+
+| Scenario | Suitability |
+|----------|-------------|
+| Learning & getting started | ✅ Excellent |
+| Input file debugging | ✅ Excellent |
+| Small system single-point / geometry optimisation | ✅ Good |
+| Short AIMD runs | ✅ Acceptable |
+| Large system calculations | ❌ Not suitable |
+| Multi-node parallel computing | ❌ Not available |
+| GPU-accelerated calculations | ❌ Not recommended |
+| Long-term production runs | ❌ Unstable |
+
+### Recommended Workflow
+
+```
+Local WSL2 (this installer)          Remote Linux HPC
+         |                                   |
+  Write input files               Large-scale calculations
+  Test small systems              Multi-node parallel jobs
+  Tune parameters                 Long production runs
+  Analyse results                 GPU acceleration
+         |                                   |
+         └──── Validate locally, then submit ┘
+```
+
+> **Best practice:** Treat WSL2 + CP2K as your **development and testing environment**, not a production computing platform.
 
 ---
 
@@ -92,7 +130,7 @@ To build from source (e.g. to update the CP2K version):
 1. Fork this repository
 2. Go to **Actions → Build CP2K Windows Installer**
 3. Click **Run workflow** on the right
-4. Wait ~20–30 minutes; download the result from the Artifacts section
+4. Wait ~30–40 minutes (conda-forge download included); download the result from the Artifacts section
 
 Completely free — GitHub provides 2,000 free build minutes per month.
 
@@ -104,15 +142,24 @@ Completely free — GitHub provides 2,000 free build minutes per month.
 cp2k-windows-installer/
 ├── .github/workflows/
 │   └── build.yml              # Automated build pipeline (GitHub Actions)
+│                              # Uses Ubuntu 24.04 WSL2 + conda-forge cp2k 2026.1
 ├── installer/
-│   ├── cp2k_setup.iss         # Inno Setup installer script
-│   └── cp2k.ico               # Application icon
+│   ├── cp2k_setup.iss         # Inno Setup installer script (bilingual EN/ZH)
+│   └── cp2k.ico               # Application icon (multi-resolution)
 ├── scripts/
 │   ├── cp2k_shell.bat         # CP2K shell launcher
 │   ├── run_cp2k.bat           # Drag-and-drop run script
 │   └── uninstall_wsl.ps1      # Uninstall helper script
 └── README.md
 ```
+
+---
+
+## License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k/blob/master/LICENSE).
 
 ---
 
@@ -127,8 +174,14 @@ cp2k-windows-installer/
 
 # CP2K Windows 一键安装包
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CP2K Version](https://img.shields.io/badge/CP2K-2026.1-blue)](https://www.cp2k.org)
+[![Build](https://github.com/Shxnek/cp2k-windows-installer/actions/workflows/build.yml/badge.svg)](https://github.com/Shxnek/cp2k-windows-installer/actions/workflows/build.yml)
+
 > CP2K 是一款用于量子化学和固体物理计算的专业科学软件。
-> 本项目将 CP2K 打包为 Windows 一键安装程序，无需任何技术背景，双击即可完成安装。
+> 本项目将 **CP2K 2026.1**（最新版）打包为 Windows 一键安装程序，无需任何技术背景，双击即可完成安装。
+>
+> 基于 **Ubuntu 24.04 WSL2 + conda-forge** 构建。
 
 ---
 
@@ -136,11 +189,43 @@ cp2k-windows-installer/
 
 1. 点击页面顶部的 **Actions** 标签
 2. 点击最新一条带绿色勾的记录
-3. 拉到页面底部，点击 **Artifacts** 下的安装包下载
-4. 解压 `.zip` 文件，得到 `CP2K_2024_Windows_Setup.exe`
+3. 拉到页面底部，点击 **Artifacts** 下的 `CP2K-Windows-installer` 下载
+4. 解压 `.zip` 文件，得到 `CP2K_2026.1_Windows_Setup.exe`
 5. 右键 → **以管理员身份运行**，按提示完成安装
 
 > 💡 安装程序约 1-2 GB，安装过程需要 3-5 分钟，请耐心等待。
+
+---
+
+## 使用场景
+
+本安装包在**单台 Windows 电脑的 WSL2**中运行 CP2K，适合学习和测试，不适用于大规模生产计算。
+
+| 场景 | 是否适合 |
+|------|---------|
+| 学习入门 | ✅ 非常适合 |
+| 输入文件调试 | ✅ 非常适合 |
+| 小体系单点/优化 | ✅ 适合 |
+| 短时间 AIMD | ✅ 勉强适合 |
+| 大体系计算 | ❌ 不适合 |
+| 多节点并行 | ❌ 不可用 |
+| GPU 加速计算 | ❌ 不推荐 |
+| 长时间生产计算 | ❌ 不稳定 |
+
+### 推荐工作流
+
+```
+本地 WSL2（本安装包）                  远程 Linux 服务器
+        |                                      |
+  写输入文件                           大规模计算
+  小体系测试                           多节点并行
+  参数调试                             长时间任务
+  结果分析                             GPU 加速
+        |                                      |
+        └────────── 确认无误后提交 ────────────┘
+```
+
+> **最佳实践：** 把 WSL2 + conda CP2K 定位成**开发和测试环境**，而不是生产计算环境，是最合理的使用方式。
 
 ---
 
@@ -217,9 +302,9 @@ cp2k-windows-installer/
 如需自己构建（例如更新 CP2K 版本），操作如下：
 
 1. Fork 本仓库
-2. 进入 **Actions → 打包 CP2K Windows 安装程序**
+2. 进入 **Actions → Build CP2K Windows Installer / 打包 CP2K Windows 安装程序**
 3. 点击右侧 **Run workflow**
-4. 等待约 20-30 分钟，完成后在 Artifacts 区域下载
+4. 等待约 30-40 分钟（含 conda-forge 下载），完成后在 Artifacts 区域下载
 
 全程免费，GitHub 每月提供 2000 分钟免费构建时间。
 
@@ -231,15 +316,24 @@ cp2k-windows-installer/
 cp2k-windows-installer/
 ├── .github/workflows/
 │   └── build.yml              # 自动打包流程（GitHub Actions）
+│                              # 基于 Ubuntu 24.04 WSL2 + conda-forge cp2k 2026.1
 ├── installer/
-│   ├── cp2k_setup.iss         # Inno Setup 安装包脚本
-│   └── cp2k.ico               # 应用程序图标
+│   ├── cp2k_setup.iss         # Inno Setup 安装包脚本（中英双语界面）
+│   └── cp2k.ico               # 应用程序图标（多分辨率）
 ├── scripts/
 │   ├── cp2k_shell.bat         # CP2K 命令行启动脚本
 │   ├── run_cp2k.bat           # 拖拽运行脚本
 │   └── uninstall_wsl.ps1      # 卸载辅助脚本
 └── README.md
 ```
+
+---
+
+## 许可证
+
+本项目基于 **MIT 许可证** 开源，详见 [LICENSE](LICENSE) 文件。
+
+CP2K 本体采用 [GPL-2.0 许可证](https://github.com/cp2k/cp2k/blob/master/LICENSE)。
 
 ---
 
