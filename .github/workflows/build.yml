@@ -17,26 +17,41 @@ jobs:
         uses: actions/checkout@v4
 
       # ── 第2步：设置 WSL2 + Ubuntu 24.04 ──
-      # Ubuntu 24.04 (Noble) apt 仓库自带 cp2k 2023.1，无需预编译二进制
       - name: 安装 WSL2 和 Ubuntu 24.04
         uses: Vampire/setup-wsl@v3
         with:
           distribution: Ubuntu-24.04
           use-cache: 'false'
 
-      # ── 第3步：安装 CP2K 2023.1 via apt ──
-      - name: 安装 CP2K 2023.1 / Install CP2K 2023.1
+      # ── 第3步：通过 conda-forge 安装 CP2K 2026.1（最新版）──
+      # apt 仓库的 cp2k 版本过旧，conda-forge 提供跨发行版的最新预编译包
+      - name: 安装 CP2K 2026.1（conda-forge）/ Install CP2K 2026.1
         shell: wsl-bash {0}
         run: |
           apt-get update -qq
-          # universe 仓库包含 cp2k
-          apt-get install -y software-properties-common
-          add-apt-repository -y universe
-          apt-get update -qq
-          apt-get install -y cp2k cp2k-data
+          apt-get install -y wget
+
+          # 安装 Miniforge（轻量级 conda，专为 conda-forge 优化）
+          echo "Installing Miniforge..."
+          wget -q \
+            "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh" \
+            -O /tmp/miniforge.sh
+          bash /tmp/miniforge.sh -b -p /opt/conda
+          rm /tmp/miniforge.sh
+
+          # 从 conda-forge 安装 CP2K 2026.1
+          echo "Installing CP2K 2026.1 from conda-forge..."
+          /opt/conda/bin/conda install -y -c conda-forge cp2k=2026.1
+
+          # 创建全局软链接，所有 shell 中均可直接使用 cp2k 命令
+          ln -sf /opt/conda/bin/cp2k /usr/local/bin/cp2k
+          # 同时写入 profile.d，保证交互式 shell PATH 正常
+          echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/cp2k.sh
+          chmod +x /etc/profile.d/cp2k.sh
+
           # 验证安装
           cp2k --version
-          echo "CP2K installed successfully"
+          echo "CP2K 2026.1 installed successfully"
 
       # ── 第4步：导出 WSL 镜像 ──
       - name: 导出 WSL 镜像

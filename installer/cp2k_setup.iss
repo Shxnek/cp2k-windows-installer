@@ -2,7 +2,7 @@
 ; Automatically compiled by GitHub Actions
 
 #define AppName "CP2K"
-#define AppVersion "2023.1"
+#define AppVersion "2026.1"
 #define AppURL "https://www.cp2k.org"
 
 [Setup]
