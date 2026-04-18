@@ -8,7 +8,7 @@ echo.
 echo  ============================================
 echo   CP2K Quantum Chemistry Software
 echo   CP2K 量子化学计算软件
-echo   Version / 版本: 2024
+echo   Version / 版本: 2026.1
 echo  ============================================
 echo.
 echo  Common commands / 常用命令:

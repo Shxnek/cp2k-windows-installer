@@ -25,7 +25,7 @@ Example input files are located at: C:\CP2K\examples\
 
 - Windows 10 (version 2004 or later) or Windows 11
 - At least 4 GB RAM
-- At least 10 GB disk space
+- At least 6 GB disk space
 
 
 [How to Uninstall]
@@ -68,7 +68,7 @@ CP2K 量子化学计算软件 - Windows 版
 
 - Windows 10 (2004 版本或更高) 或 Windows 11
 - 至少 4GB 内存
-- 至少 10GB 磁盘空间
+- 至少 6GB 磁盘空间
 
 
 【卸载方法】
