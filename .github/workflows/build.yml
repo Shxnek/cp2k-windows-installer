@@ -53,6 +53,49 @@ jobs:
           cp2k --version
           echo "CP2K 2026.1 installed successfully"
 
+          # 将实际版本号写入 GitHub Actions 环境变量，供后续步骤使用
+          CP2K_VER=$(cp2k --version 2>/dev/null | grep "CP2K version" | awk '{print $3}')
+          echo "CP2K_VER=${CP2K_VER}" >> $GITHUB_ENV
+          echo "Detected version: ${CP2K_VER}"
+
+      # ── 第3.5步：将实际 CP2K 版本号注入启动脚本（在清理之前）──
+      - name: 注入 CP2K 版本号到启动脚本 / Inject CP2K version into launcher
+        shell: powershell
+        run: |
+          # 从 GitHub Actions 环境变量读取版本号（由上一步写入）
+          $ver = "$env:CP2K_VER"
+          if (-not $ver) { $ver = "2026.1" }   # 兜底值
+          $ver = $ver.Trim()
+          Write-Host "Injecting CP2K version: $ver"
+
+          # 替换 cp2k_shell.bat 中的版本号行
+          $batPath = "scripts\cp2k_shell.bat"
+          (Get-Content $batPath -Encoding UTF8) `
+            -replace "Version / 版本: [^\r\n]*", "Version / 版本: $ver" |
+            Set-Content $batPath -Encoding UTF8
+          Write-Host "Version injected successfully into $batPath"
+
+      # ── 第3.6步：清理 conda 缓存，减小镜像体积 ──
+      - name: 清理缓存，减小镜像体积 / Clean up cache to reduce image size
+        shell: wsl-bash {0}
+        run: |
+          echo "清理前磁盘占用 / Disk usage before cleanup:"
+          du -sh /opt/conda 2>/dev/null || true
+
+          # 清理 conda 包缓存（安装完后不再需要）
+          /opt/conda/bin/conda clean --all -y
+
+          # 清理 apt 缓存
+          apt-get clean
+          rm -rf /var/lib/apt/lists/*
+
+          # 清理临时文件和编译缓存
+          rm -rf /tmp/*
+          rm -rf /root/.cache
+
+          echo "清理后磁盘占用 / Disk usage after cleanup:"
+          du -sh /opt/conda 2>/dev/null || true
+
       # ── 第4步：导出 WSL 镜像 ──
       - name: 导出 WSL 镜像
         shell: cmd

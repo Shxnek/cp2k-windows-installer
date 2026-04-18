@@ -16,7 +16,7 @@ DefaultDirName=C:\CP2K
 DefaultGroupName=CP2K
 OutputDir=..\output
 OutputBaseFilename=CP2K_{#AppVersion}_Windows_Setup
-Compression=lzma2/ultra64
+Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
 PrivilegesRequired=admin
@@ -79,6 +79,10 @@ chinesesimplified.Step3Desc=正在删除安装过程产生的临时文件，释�
 chinesesimplified.DoneTitle=安装完成！
 chinesesimplified.DoneDesc=CP2K 已成功安装到你的电脑。
 
+; ----- WSL check status (shown while checking, after welcome page) -----
+english.CheckingWSL=Checking system environment, please wait…
+chinesesimplified.CheckingWSL=正在检测系统环境，请稍候…
+
 ; ----- Error / warning messages  (%1 = runtime parameter) -----
 english.ErrOSVersion=Your operating system is not supported.%n%nWindows 10 2004 (Build 19041) or later is required.%nPlease update Windows and run the installer again.
 english.ErrDiskSpace=Insufficient disk space.%n%nAt least 6 GB of free space on drive C is required.%nCurrent free space: %1 GB%n%nPlease free up space and retry. Continue anyway?
@@ -140,23 +144,23 @@ var
   ProgressPage: TOutputProgressWizardPage;
 
 // ────────────────────────────────────────────────
-// Pre-install checks: OS version / disk space / WSL2
+// Pre-install checks: OS version + disk space only
+// (WSL2 check moved to NextButtonClick to avoid blocking UI startup)
 // ────────────────────────────────────────────────
 function InitializeSetup(): Boolean;
 var
-  ResultCode: Integer;
   FreeSpace, TotalSpace: Cardinal;
 begin
   Result := True;
 
-  // 1. Windows version (minimum Win10 2004)
+  // 1. Windows version (minimum Win10 2004) — instant, safe to run before UI
   if GetWindowsVersion < $0A003905 then begin
     MsgBox(CustomMessage('ErrOSVersion'), mbError, MB_OK);
     Result := False;
     Exit;
   end;
 
-  // 2. Disk space (at least 6 GB on C:\)
+  // 2. Disk space (at least 6 GB on C:\) — instant, safe to run before UI
   GetSpaceOnDisk('C:\', True, FreeSpace, TotalSpace);
   if FreeSpace < 6144 then begin
     if MsgBox(
@@ -167,19 +171,42 @@ begin
     end;
   end;
 
-  // 3. WSL2 availability
-  if not Exec('wsl.exe', '--status', '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
-     or (ResultCode <> 0) then begin
-    if MsgBox(CustomMessage('ErrWSL2Prompt'), mbConfirmation, MB_YESNO) = IDYES then begin
-      Exec('dism.exe',
-        '/online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart',
-        '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-      Exec('dism.exe',
-        '/online /enable-feature /featurename:VirtualMachinePlatform /all /norestart',
-        '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-      MsgBox(CustomMessage('ErrWSL2Enabled'), mbInformation, MB_OK);
+  // WSL2 check is deferred to NextButtonClick (welcome page → next)
+  // so the installer window appears immediately without blocking.
+end;
+
+// ────────────────────────────────────────────────
+// WSL2 check: runs when user clicks Next on welcome page
+// UI is already visible at this point — no "black screen" freeze
+// ────────────────────────────────────────────────
+function NextButtonClick(CurPageID: Integer): Boolean;
+var
+  ResultCode: Integer;
+begin
+  Result := True;
+
+  if CurPageID = wpWelcome then begin
+    // Show a status hint so the user knows something is happening
+    WizardForm.StatusLabel.Caption := CustomMessage('CheckingWSL');
+    WizardForm.Update;
+
+    if not Exec('wsl.exe', '--status', '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
+       or (ResultCode <> 0) then begin
+      WizardForm.StatusLabel.Caption := '';
+      if MsgBox(CustomMessage('ErrWSL2Prompt'), mbConfirmation, MB_YESNO) = IDYES then begin
+        Exec('dism.exe',
+          '/online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart',
+          '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+        Exec('dism.exe',
+          '/online /enable-feature /featurename:VirtualMachinePlatform /all /norestart',
+          '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+        MsgBox(CustomMessage('ErrWSL2Enabled'), mbInformation, MB_OK);
+      end;
+      Result := False;
+      Exit;
     end;
-    Result := False;
+
+    WizardForm.StatusLabel.Caption := '';
   end;
 end;
 
