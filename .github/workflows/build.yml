@@ -28,16 +28,28 @@ jobs:
         shell: wsl-bash {0}
         run: |
           apt-get update -qq
-          apt-get install -y libgomp1 wget bzip2
+          apt-get install -y libgomp1 wget bzip2 file
 
-          # 下载官方预编译二进制（689 MB，OpenMP 并行版）
+          # ── 下载预编译二进制（689 MB）──
           echo "Downloading CP2K 2025.1 binary (~689 MB)..."
           wget -q --show-progress \
             "https://github.com/cp2k/cp2k/releases/download/v2025.1/cp2k-2025.1-Linux-gnu-x86_64.ssmp" \
-            -O /usr/local/bin/cp2k
+            -O /tmp/cp2k_download
+
+          # 诊断：显示实际文件格式
+          echo "Binary file type: $(file /tmp/cp2k_download)"
+          echo "Architecture:     $(uname -m)"
+
+          # 若文件是 gzip 压缩包则先解压，否则直接使用
+          if file /tmp/cp2k_download | grep -q 'gzip'; then
+            echo "Decompressing gzip binary..."
+            zcat /tmp/cp2k_download > /usr/local/bin/cp2k
+          else
+            mv /tmp/cp2k_download /usr/local/bin/cp2k
+          fi
           chmod +x /usr/local/bin/cp2k
 
-          # 下载源码包并提取数据文件（BASIS_SETS / POTENTIAL 等）
+          # ── 下载源码包并提取数据文件（BASIS_SETS / POTENTIAL 等）──
           echo "Downloading CP2K data files (~70 MB)..."
           wget -q \
             "https://github.com/cp2k/cp2k/releases/download/v2025.1/cp2k-2025.1.tar.bz2" \
@@ -53,6 +65,8 @@ jobs:
           echo 'CP2K_DATA_DIR=/usr/share/cp2k/data' >> /etc/environment
 
           # 验证安装
+          echo "Verifying CP2K binary..."
+          file /usr/local/bin/cp2k
           CP2K_DATA_DIR=/usr/share/cp2k/data /usr/local/bin/cp2k --version
           echo "CP2K 2025.1 installed successfully"
 
