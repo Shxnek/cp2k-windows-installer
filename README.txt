@@ -9,12 +9,6 @@ CP2K Quantum Chemistry Software – Windows Edition
     cp2k -i yourfile.inp
 
 
-[Example Files]
-
-Example input files are located at: C:\CP2K\examples\
-(This is the default install path. Adjust if you chose a different location.)
-
-
 [System Requirements]
 
 - Windows 10 (version 2004 or later) or Windows 11
@@ -45,12 +39,6 @@ CP2K 量子化学计算软件 - Windows 版
   Shell 会自动定位到你的 Windows 用户主目录。
   然后输入：
     cp2k -i 你的文件.inp
-
-
-【示例文件】
-
-示例输入文件位于: C:\CP2K\examples\
-（此为默认安装路径，如安装到其他位置请对应调整。）
 
 
 【系统要求】

@@ -15,8 +15,6 @@ if "%~1"=="" (
     echo  Usage / 用法:
     echo    run_cp2k.bat yourfile.inp
     echo.
-    echo  Example files / 示例文件: %~dp0examples
-    echo.
     pause
     exit /b 0
 )

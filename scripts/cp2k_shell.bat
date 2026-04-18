@@ -19,10 +19,6 @@ echo  Common commands / 常用命令:
 echo    cp2k -i input.inp              Run calculation / 运行计算
 echo    cp2k -i input.inp ^> out.log    Save output / 输出到文件
 echo.
-echo  Example files / 示例文件:
-echo    Windows : %~dp0examples
-echo    Linux   : ls ~/  to explore / 在 Shell 内输入 ls ~/ 查看
-echo.
 echo  Type "exit" to quit / 输入 exit 退出
 echo  ============================================
 echo.

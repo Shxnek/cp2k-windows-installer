@@ -84,28 +84,6 @@ jobs:
           )
           Write-Host "Version injected into $batPath successfully (UTF-8 no BOM)"
 
-      # ── 第3.55步：下载 CP2K 官方示例文件 ──
-      # 从 CP2K GitHub 仓库下载入门级示例，存入 WSL /root/cp2k-examples/
-      # 安装时会由 Inno Setup 复制到 C:\CP2K\examples\
-      - name: 下载 CP2K 官方示例文件 / Download CP2K example files
-        shell: wsl-bash {0}
-        run: |
-          EXDIR="/root/cp2k-examples"
-          mkdir -p "$EXDIR"
-
-          echo "Fetching CP2K example file list from GitHub..."
-          # 用单行 Python one-liner 解析 GitHub API JSON，避免多行代码嵌入 YAML 的缩进问题
-          API="https://api.github.com/repos/cp2k/cp2k/contents/tests/QS/regtest-1-1"
-          URLS=$(curl -sf "$API" | python3 -c "import sys,json;[print(x['download_url']) for x in json.load(sys.stdin) if x['name'].endswith('.inp')]" | head -8) || true
-
-          if [ -n "$URLS" ]; then
-            echo "$URLS" | xargs -I{} wget -q {} -P "$EXDIR"
-            echo "Downloaded example files:"
-            ls -lh "$EXDIR/"
-          else
-            echo "Warning: could not fetch example list (non-fatal)"
-          fi
-
       # ── 第3.6步：清理 conda 缓存，减小镜像体积 ──
       - name: 清理缓存，减小镜像体积 / Clean up cache to reduce image size
         shell: wsl-bash {0}

@@ -69,7 +69,6 @@ The installer guides you through the entire process — no manual steps needed. 
 
 - **Real-time progress**
   - Step 1/3: Import CP2K runtime environment (~2–4 min)
-  - ↳ Copy example input files to `C:\CP2K\examples\`
   - Step 2/3: Configure system environment variables
   - Step 3/3: Clean up temporary files
 
@@ -101,8 +100,6 @@ A **CP2K** shortcut will appear on your desktop after installation.
   cp2k -i yourfile.inp
   ```
   The shell opens in your Windows user home directory (`C:\Users\<you>`), so files on your Desktop or in Documents are easy to reach.
-
-**Example files:** `C:\CP2K\examples\` (default install path; adjust if you chose a different location)
 
 ---
 
@@ -169,7 +166,6 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
 
 - [CP2K Official Website](https://www.cp2k.org)
 - [CP2K Manual](https://manual.cp2k.org)
-- [CP2K Example Input Files](https://github.com/cp2k/cp2k/tree/master/tests)
 
 ---
 ---
@@ -245,7 +241,6 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
 
 - **安装中实时进度**
   - 步骤 1/3：导入 CP2K 运行环境（约 2-4 分钟）
-  - ↳ 复制示例输入文件到 `C:\CP2K\examples\`
   - 步骤 2/3：配置系统环境变量
   - 步骤 3/3：清理临时文件
 
@@ -277,8 +272,6 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
   cp2k -i 你的文件.inp
   ```
   Shell 启动后自动定位到你的 Windows 用户主目录（`C:\Users\用户名`），桌面和文档里的文件可以直接访问。
-
-**示例文件位置：** `C:\CP2K\examples\`（默认安装路径，如安装到其他位置请对应调整）
 
 ---
 
@@ -345,4 +338,3 @@ CP2K 本体采用 [GPL-2.0 许可证](https://github.com/cp2k/cp2k/blob/master/L
 
 - [CP2K 官方网站](https://www.cp2k.org)
 - [CP2K 使用手册](https://manual.cp2k.org)
-- [CP2K 示例输入文件](https://github.com/cp2k/cp2k/tree/master/tests)

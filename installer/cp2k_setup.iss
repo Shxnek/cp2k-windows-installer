@@ -61,8 +61,6 @@ english.ProgressTitle=Installing CP2K
 english.ProgressDesc=Please wait while the installer completes all configuration…
 english.Step1Title=Step 1 / 3: Importing CP2K Runtime
 english.Step1Desc=Decompressing and importing the runtime environment. This usually takes 2–4 minutes — please do not close the window…
-english.Step1bTitle=Step 1 / 3: Copying Example Files
-english.Step1bDesc=Copying example input files to C:\CP2K\examples\…
 english.Step2Title=Step 2 / 3: Configuring Environment Variables
 english.Step2Desc=Adding CP2K to PATH so it can be used from any command-line window…
 english.Step3Title=Step 3 / 3: Cleaning Up Temporary Files
@@ -74,8 +72,6 @@ chinesesimplified.ProgressTitle=正在安装 CP2K
 chinesesimplified.ProgressDesc=请耐心等待，安装程序正在自动完成所有配置…
 chinesesimplified.Step1Title=步骤 1 / 3：导入 CP2K 运行环境
 chinesesimplified.Step1Desc=正在解压并导入运行环境，通常需要 2-4 分钟，请勿关闭窗口…
-chinesesimplified.Step1bTitle=步骤 1 / 3：复制示例文件
-chinesesimplified.Step1bDesc=正在将示例输入文件复制到 C:\CP2K\examples\…
 chinesesimplified.Step2Title=步骤 2 / 3：配置系统环境变量
 chinesesimplified.Step2Desc=将 CP2K 添加到 PATH，以便在任意命令行窗口中直接使用…
 chinesesimplified.Step3Title=步骤 3 / 3：清理临时文件
@@ -102,18 +98,19 @@ chinesesimplified.EnablingWSLStep2=步骤 1a / 3：正在启用 Windows 子系�
 chinesesimplified.EnablingWSLStep3=步骤 2 / 3：正在启用虚拟机平台功能…
 chinesesimplified.EnablingWSLStep4=步骤 3 / 3：正在将 WSL2 设为默认版本…
 
-; ----- Restart prompt (shown after WSL2 enabling, user can cancel) -----
-english.RestartDesc=WSL2 has been enabled successfully.%n%nYour computer will restart in 5 seconds.%n%nClick OK to allow the restart, or Cancel to abort.
-english.RestartCancelledMsg=Automatic restart cancelled.%n%nPlease restart your computer manually to complete WSL2 setup,%nthen run this installer again.
+; ----- Restart prompt (shown after WSL2 enabling) -----
+english.RestartPrompt=WSL2 has been enabled successfully.%n%nA restart is required to complete the setup.%n%nWould you like to restart now?
+english.RestartCancelledMsg=Restart skipped.%n%nPlease restart your computer manually to complete WSL2 setup,%nthen run this installer again.
 
-chinesesimplified.RestartDesc=WSL2 已成功启用。%n%n电脑将在 5 秒后自动重启。%n%n点击"确定"允许重启，或点击"取消"中止重启。
-chinesesimplified.RestartCancelledMsg=已取消自动重启。%n%n请手动重启电脑以完成 WSL2 配置，%n重启后再次运行本安装程序。
+chinesesimplified.RestartPrompt=WSL2 已成功启用。%n%n需要重启电脑才能完成配置。%n%n是否立即重启？
+chinesesimplified.RestartCancelledMsg=已跳过重启。%n%n请手动重启电脑以完成 WSL2 配置，%n重启后再次运行本安装程序。
 
 ; ----- Error / warning messages  (%1 = runtime parameter) -----
 english.ErrOSVersion=Your operating system is not supported.%n%nWindows 10 2004 (Build 19041) or later is required.%nPlease update Windows and run the installer again.
 english.ErrDiskSpace=Insufficient disk space.%n%nAt least 6 GB of free space on drive C is required.%nCurrent free space: %1 GB%n%nPlease free up space and retry. Continue anyway?
 english.ErrWSL2Prompt=WSL2 not detected.%n%nCP2K requires the Windows Subsystem for Linux (WSL2).%nClick Yes to enable WSL2 automatically.%nYour computer will need to restart; run the installer again afterwards.
 english.ErrWSL2Enabled=WSL2 has been enabled.%n%nPlease restart your computer now, then run this installer again.
+english.ErrWSL2KernelNote=Additional step required for Windows 10:%n%nAfter restarting, download and install the WSL2 Linux kernel update package:%n    https://aka.ms/wsl2kernel%n%nThen run this installer again.
 english.ErrWSL2EnvFail=Failed to import runtime environment (error code: %1).%n%nSuggested fixes:%n  1. Restart your computer and run the installer again%n  2. Enable WSL manually via "Turn Windows features on or off"%n  3. Ensure virtualisation (VT-x / AMD-V) is enabled in BIOS%n%nFor further help visit https://www.cp2k.org
 english.WarnEnvVar=Environment variable configuration failed — this will not affect normal use.%nYou can still launch CP2K by double-clicking the desktop shortcut.
 
@@ -121,12 +118,13 @@ chinesesimplified.ErrOSVersion=系统版本不符合要求。%n%n需要 Windows 
 chinesesimplified.ErrDiskSpace=C 盘可用空间不足。%n%n安装 CP2K 至少需要 6GB 可用空间。%n当前 C 盘剩余空间：%1 GB%n%n建议清理磁盘后重试。是否仍要继续安装？
 chinesesimplified.ErrWSL2Prompt=未检测到 WSL2。%n%nCP2K 需要 Windows 子系统（WSL2）才能运行。%n点击"是"将自动启用 WSL2，完成后需重启电脑，%n重启后请再次运行安装程序。
 chinesesimplified.ErrWSL2Enabled=WSL2 已启用。%n%n请现在重启电脑，重启完成后再次运行本安装程序。
+chinesesimplified.ErrWSL2KernelNote=Windows 10 用户需额外操作：%n%n重启完成后，请下载并安装 WSL2 Linux 内核更新包：%n    https://aka.ms/wsl2kernel%n%n安装完成后再次运行本安装程序。
 chinesesimplified.ErrWSL2EnvFail=运行环境导入失败（错误码：%1）。%n%n请尝试以下解决方法：%n  1. 重启电脑后重新运行安装程序%n  2. 在"开启或关闭 Windows 功能"中手动启用 WSL%n  3. 确认 BIOS 中已开启虚拟化（Virtualization）%n%n如问题持续，请访问 https://www.cp2k.org 获取帮助。
 chinesesimplified.WarnEnvVar=环境变量配置失败，不影响正常使用。%n你仍可通过双击桌面快捷方式来启动 CP2K。
 
 ; ----- Finish page -----
-english.FinishedMsg=CP2K installation complete!%n%nQuick start:%n  · Double-click the CP2K icon on your desktop to open the shell%n  · The shell opens in your Windows user home folder automatically%n  · Type: cp2k -i yourfile.inp  to run a calculation%n  · Example files: C:\CP2K\examples\%n%nNeed help? Visit https://www.cp2k.org
-chinesesimplified.FinishedMsg=CP2K 安装完成！%n%n快速上手：%n  · 双击桌面的 CP2K 图标，打开命令行环境%n  · Shell 自动定位到你的 Windows 用户主目录%n  · 输入：cp2k -i 你的文件.inp  开始计算%n  · 示例文件位置：C:\CP2K\examples\%n%n遇到问题？访问 https://www.cp2k.org 查阅文档。
+english.FinishedMsg=CP2K installation complete!%n%nQuick start:%n  · Double-click the CP2K icon on your desktop to open the shell%n  · The shell opens in your Windows user home folder automatically%n  · Type: cp2k -i yourfile.inp  to run a calculation%n%nNeed help? Visit https://www.cp2k.org
+chinesesimplified.FinishedMsg=CP2K 安装完成！%n%n快速上手：%n  · 双击桌面的 CP2K 图标，打开命令行环境%n  · Shell 自动定位到你的 Windows 用户主目录%n  · 输入：cp2k -i 你的文件.inp  开始计算%n%n遇到问题？访问 https://www.cp2k.org 查阅文档。
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:DesktopIconDesc}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkedonce
@@ -147,9 +145,6 @@ Name: "{group}\{cm:StartMenuReadme}";  Filename: "{app}\README.txt"
 Name: "{group}\{cm:StartMenuUninstall}"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\{cm:DesktopLink}"; Filename: "{app}\cp2k_shell.bat"; WorkingDir: "{app}"; IconFilename: "{app}\cp2k.ico"; Tasks: desktopicon
 
-[UninstallDelete]
-; Remove example files installed to {app}\examples\ during uninstall
-Type: filesandordirs; Name: "{app}\examples"
 
 [UninstallRun]
 ; 注销 WSL 发行版
@@ -180,21 +175,16 @@ var
   // When True, CancelButtonClick will skip the "are you sure?" confirmation
   SilentCancel : Boolean;
 
-// Schedule OS restart in 5 s and let the user cancel if needed
-procedure ShowRestartCountdown;
+// Ask user to restart; one confirmation before executing
+procedure ShowRestartPrompt;
 var
   RC: Integer;
 begin
-  // Schedule OS restart (shutdown returns immediately, restart fires after 5 s)
-  Exec('shutdown.exe',
-    '/r /t 5 /c "WSL2 enabled — restarting for CP2K setup."',
-    '', SW_HIDE, ewWaitUntilTerminated, RC);
-
-  // Inform the user; clicking Cancel aborts the scheduled restart
-  if MsgBox(CustomMessage('RestartDesc'), mbConfirmation, MB_OKCANCEL) = IDCANCEL then begin
-    Exec('shutdown.exe', '/a', '', SW_HIDE, ewWaitUntilTerminated, RC);
+  if MsgBox(CustomMessage('RestartPrompt'), mbConfirmation, MB_YESNO) = IDYES then
+    Exec('shutdown.exe', '/r /t 0 /c "WSL2 enabled — restarting for CP2K setup."',
+      '', SW_HIDE, ewWaitUntilTerminated, RC)
+  else
     MsgBox(CustomMessage('RestartCancelledMsg'), mbInformation, MB_OK);
-  end;
 end;
 
 // ────────────────────────────────────────────────
@@ -202,8 +192,29 @@ end;
 // ────────────────────────────────────────────────
 procedure CancelButtonClick(CurPageID: Integer; var Cancel, Confirm: Boolean);
 begin
-  if SilentCancel then
-    Confirm := False;  // exit immediately without extra confirmation prompt
+  if SilentCancel then begin
+    Cancel  := True;   // proceed with cancellation
+    Confirm := False;  // skip the "are you sure?" prompt
+  end;
+end;
+
+// ────────────────────────────────────────────────
+// WSL2 readiness check: accept either --version (Store/2.x) or
+// --status (in-box Windows 11 WSL2).  Either returning 0 means WSL2
+// is installed and functional enough to run wsl --import.
+// ────────────────────────────────────────────────
+function IsWSL2Ready: Boolean;
+var
+  RC: Integer;
+begin
+  Result := False;
+  if Exec('wsl.exe', '--version', '', SW_HIDE, ewWaitUntilTerminated, RC)
+     and (RC = 0) then begin
+    Result := True; Exit;
+  end;
+  if Exec('wsl.exe', '--status', '', SW_HIDE, ewWaitUntilTerminated, RC)
+     and (RC = 0) then
+    Result := True;
 end;
 
 // ────────────────────────────────────────────────
@@ -253,12 +264,9 @@ begin
     WizardForm.StatusLabel.Caption := CustomMessage('CheckingWSL');
     WizardForm.Update;
 
-    // Use "wsl --version" as the WSL2 readiness check:
-    //   • exits 0  → WSL2 kernel is installed and ready
-    //   • exits non-0 → WSL not present, not enabled, or kernel missing
-    // (More reliable than --status which can exit non-0 even when WSL is usable)
-    if not Exec('wsl.exe', '--version', '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
-       or (ResultCode <> 0) then begin
+    // IsWSL2Ready tries wsl --version (Store/2.x) then wsl --status (in-box).
+    // Either returning exit 0 means WSL2 is functional.
+    if not IsWSL2Ready then begin
       WizardForm.StatusLabel.Caption := '';
 
       if MsgBox(CustomMessage('ErrWSL2Prompt'), mbConfirmation, MB_YESNO) = IDYES then begin
@@ -283,9 +291,11 @@ begin
           '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 
         if ResultCode <> 0 then begin
-          // ── Method 2: DISM fallback (older Windows 10 builds) ──
-          // NOTE: DISM alone does NOT install the WSL2 kernel;
-          //       the user will still need the kernel MSI after reboot on Win10.
+          // ── Method 2: DISM fallback (Windows 10 pre-21H2 or Store-disabled) ──
+          // DISM enables the WSL feature and VM Platform, but on Windows 10 it
+          // does NOT install the WSL2 Linux kernel.  After reboot the user must
+          // manually install the kernel MSI from https://aka.ms/wsl2kernel
+          // (Windows 11 gets the kernel automatically via Windows Update).
           ProgressPage.SetText(
             CustomMessage('EnablingWSLTitle'),
             CustomMessage('EnablingWSLStep2')
@@ -303,6 +313,12 @@ begin
           Exec('dism.exe',
             '/online /enable-feature /featurename:VirtualMachinePlatform /all /norestart',
             '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+
+          // Windows 11 starts at Build 22000 ($55F0).
+          // On Windows 10 (Build < 22000), DISM alone is not enough —
+          // warn the user they need the kernel update package after rebooting.
+          if GetWindowsVersion < $0A0055F0 then
+            MsgBox(CustomMessage('ErrWSL2KernelNote'), mbInformation, MB_OK);
         end;
 
         // ── Always: set WSL2 as the default version ──
@@ -317,14 +333,14 @@ begin
         ProgressPage.SetProgress(100, 100);
         ProgressPage.Hide;
 
-        // Show countdown dialog and schedule OS restart;
-        // user can click "Cancel Restart" to abort.
-        ShowRestartCountdown;
+        // Ask user to restart (two confirmations required)
+        ShowRestartPrompt;
       end else begin
         // User clicked No — they declined to enable WSL2.
-        // Exit the installer immediately (no second "are you sure?" prompt).
+        // Simulate a Cancel-button click so CancelButtonClick fires and
+        // exits without showing the "are you sure?" confirmation dialog.
         SilentCancel := True;
-        WizardForm.Close;
+        WizardForm.CancelButton.Click;
       end;
 
       Result := False;
@@ -381,23 +397,6 @@ begin
         FmtMessage(CustomMessage('ErrWSL2EnvFail'), [IntToStr(ResultCode)]),
         mbError, MB_OK);
       Exit;
-    end;
-    ProgressPage.SetProgress(65, 100);
-
-    // ── Step 1b: Copy example files from WSL to Windows ──
-    ProgressPage.SetText(
-      CustomMessage('Step1bTitle'),
-      CustomMessage('Step1bDesc')
-    );
-    if DirExists('\\wsl$\CP2K\root\cp2k-examples') then begin
-      if not DirExists(AppDir + '\examples') then
-        CreateDir(AppDir + '\examples');
-      Exec('powershell.exe',
-        '-NoProfile -ExecutionPolicy Bypass -Command ' +
-        '"Copy-Item -Path ''\\wsl$\CP2K\root\cp2k-examples\*'' ' +
-        '-Destination ''' + AppDir + '\examples'' -Recurse -Force ' +
-        '-ErrorAction SilentlyContinue"',
-        '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
     end;
     ProgressPage.SetProgress(68, 100);
 
