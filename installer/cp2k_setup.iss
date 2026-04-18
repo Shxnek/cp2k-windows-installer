@@ -61,6 +61,8 @@ english.ProgressTitle=Installing CP2K
 english.ProgressDesc=Please wait while the installer completes all configuration…
 english.Step1Title=Step 1 / 3: Importing CP2K Runtime
 english.Step1Desc=Decompressing and importing the runtime environment. This usually takes 2–4 minutes — please do not close the window…
+english.Step1bTitle=Step 1 / 3: Copying Example Files
+english.Step1bDesc=Copying example input files to C:\CP2K\examples\…
 english.Step2Title=Step 2 / 3: Configuring Environment Variables
 english.Step2Desc=Adding CP2K to PATH so it can be used from any command-line window…
 english.Step3Title=Step 3 / 3: Cleaning Up Temporary Files
@@ -72,6 +74,8 @@ chinesesimplified.ProgressTitle=正在安装 CP2K
 chinesesimplified.ProgressDesc=请耐心等待，安装程序正在自动完成所有配置…
 chinesesimplified.Step1Title=步骤 1 / 3：导入 CP2K 运行环境
 chinesesimplified.Step1Desc=正在解压并导入运行环境，通常需要 2-4 分钟，请勿关闭窗口…
+chinesesimplified.Step1bTitle=步骤 1 / 3：复制示例文件
+chinesesimplified.Step1bDesc=正在将示例输入文件复制到 C:\CP2K\examples\…
 chinesesimplified.Step2Title=步骤 2 / 3：配置系统环境变量
 chinesesimplified.Step2Desc=将 CP2K 添加到 PATH，以便在任意命令行窗口中直接使用…
 chinesesimplified.Step3Title=步骤 3 / 3：清理临时文件
@@ -99,8 +103,8 @@ chinesesimplified.ErrWSL2EnvFail=运行环境导入失败（错误码：%1）。
 chinesesimplified.WarnEnvVar=环境变量配置失败，不影响正常使用。%n你仍可通过双击桌面快捷方式来启动 CP2K。
 
 ; ----- Finish page -----
-english.FinishedMsg=CP2K installation complete!%n%nQuick start:%n  · Double-click the CP2K icon on your desktop to open the shell%n  · Drag a .inp file onto the CP2K icon to run it directly%n  · Example files: C:\CP2K\examples\%n%nNeed help? Visit https://www.cp2k.org
-chinesesimplified.FinishedMsg=CP2K 安装完成！%n%n快速上手：%n  · 双击桌面的 CP2K 图标，打开命令行环境%n  · 将 .inp 输入文件拖拽到 CP2K 图标上直接运行%n  · 示例文件位置：C:\CP2K\examples\%n%n遇到问题？访问 https://www.cp2k.org 查阅文档。
+english.FinishedMsg=CP2K installation complete!%n%nQuick start:%n  · Double-click the CP2K icon on your desktop to open the shell%n  · The shell opens in your Windows user home folder automatically%n  · Type: cp2k -i yourfile.inp  to run a calculation%n  · Example files: C:\CP2K\examples\%n%nNeed help? Visit https://www.cp2k.org
+chinesesimplified.FinishedMsg=CP2K 安装完成！%n%n快速上手：%n  · 双击桌面的 CP2K 图标，打开命令行环境%n  · Shell 自动定位到你的 Windows 用户主目录%n  · 输入：cp2k -i 你的文件.inp  开始计算%n  · 示例文件位置：C:\CP2K\examples\%n%n遇到问题？访问 https://www.cp2k.org 查阅文档。
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:DesktopIconDesc}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkedonce
@@ -120,6 +124,10 @@ Name: "{group}\{cm:StartMenuShell}";   Filename: "{app}\cp2k_shell.bat"; Working
 Name: "{group}\{cm:StartMenuReadme}";  Filename: "{app}\README.txt"
 Name: "{group}\{cm:StartMenuUninstall}"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\{cm:DesktopLink}"; Filename: "{app}\cp2k_shell.bat"; WorkingDir: "{app}"; IconFilename: "{app}\cp2k.ico"; Tasks: desktopicon
+
+[UninstallDelete]
+; Remove example files installed to {app}\examples\ during uninstall
+Type: filesandordirs; Name: "{app}\examples"
 
 [UninstallRun]
 Filename: "wsl.exe"; Parameters: "--unregister CP2K"; Flags: runhidden
@@ -258,6 +266,23 @@ begin
       Exit;
     end;
     ProgressPage.SetProgress(65, 100);
+
+    // ── Step 1b: Copy example files from WSL to Windows ──
+    ProgressPage.SetText(
+      CustomMessage('Step1bTitle'),
+      CustomMessage('Step1bDesc')
+    );
+    if DirExists('\\wsl$\CP2K\root\cp2k-examples') then begin
+      if not DirExists(AppDir + '\examples') then
+        CreateDir(AppDir + '\examples');
+      Exec('powershell.exe',
+        '-NoProfile -ExecutionPolicy Bypass -Command ' +
+        '"Copy-Item -Path ''\\wsl$\CP2K\root\cp2k-examples\*'' ' +
+        '-Destination ''' + AppDir + '\examples'' -Recurse -Force ' +
+        '-ErrorAction SilentlyContinue"',
+        '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    end;
+    ProgressPage.SetProgress(68, 100);
 
     // ── Step 2/3: Configure environment variables ──
     ProgressPage.SetText(

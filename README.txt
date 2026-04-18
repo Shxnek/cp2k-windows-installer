@@ -3,22 +3,16 @@ CP2K Quantum Chemistry Software – Windows Edition
 
 [How to Run a Calculation]
 
-Method 1 (easiest):
-  Drag your .inp input file onto the "CP2K" desktop icon.
-
-Method 2 (command line):
-  Double-click the "CP2K" desktop icon to open a shell, then type:
+  Double-click the "CP2K" desktop icon to open a shell.
+  The shell opens in your Windows user home folder automatically.
+  Then type:
     cp2k -i yourfile.inp
-
-Method 3:
-  In the folder containing your input file, hold Shift and right-click
-  → "Open command window here", then type:
-    "C:\CP2K\run_cp2k.bat" yourfile.inp
 
 
 [Example Files]
 
 Example input files are located at: C:\CP2K\examples\
+(This is the default install path. Adjust if you chose a different location.)
 
 
 [System Requirements]
@@ -47,21 +41,16 @@ CP2K 量子化学计算软件 - Windows 版
 
 【如何运行计算】
 
-方法一（最简单）：
-  直接把你的 .inp 输入文件拖拽到桌面的 "CP2K" 图标上
-
-方法二（命令行）：
-  双击桌面 "CP2K" 图标，打开命令行后输入：
+  双击桌面 "CP2K" 图标，打开命令行。
+  Shell 会自动定位到你的 Windows 用户主目录。
+  然后输入：
     cp2k -i 你的文件.inp
-
-方法三：
-  在文件所在文件夹，按住 Shift 右键 → 在此处打开命令行，输入：
-    "C:\CP2K\run_cp2k.bat" 你的文件.inp
 
 
 【示例文件】
 
 示例输入文件位于: C:\CP2K\examples\
+（此为默认安装路径，如安装到其他位置请对应调整。）
 
 
 【系统要求】

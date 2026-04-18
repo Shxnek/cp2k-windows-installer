@@ -69,6 +69,7 @@ The installer guides you through the entire process — no manual steps needed. 
 
 - **Real-time progress**
   - Step 1/3: Import CP2K runtime environment (~2–4 min)
+  - ↳ Copy example input files to `C:\CP2K\examples\`
   - Step 2/3: Configure system environment variables
   - Step 3/3: Clean up temporary files
 
@@ -94,16 +95,14 @@ The installer guides you through the entire process — no manual steps needed. 
 
 A **CP2K** shortcut will appear on your desktop after installation.
 
-**Method 1 (easiest): Drag and drop**
-- Drag your `.inp` input file onto the **CP2K desktop icon** — calculation starts automatically
-
-**Method 2: Command line**
+**Run a calculation:**
 - Double-click the CP2K desktop icon to open a shell, then type:
   ```
   cp2k -i yourfile.inp
   ```
+  The shell opens in your Windows user home directory (`C:\Users\<you>`), so files on your Desktop or in Documents are easy to reach.
 
-**Example files:** `C:\CP2K\examples\`
+**Example files:** `C:\CP2K\examples\` (default install path; adjust if you chose a different location)
 
 ---
 
@@ -150,8 +149,8 @@ cp2k-windows-installer/
 │   ├── cp2k_setup.iss         # Inno Setup installer script (bilingual EN/ZH)
 │   └── cp2k.ico               # Application icon (multi-resolution)
 ├── scripts/
-│   ├── cp2k_shell.bat         # CP2K shell launcher
-│   ├── run_cp2k.bat           # Drag-and-drop run script
+│   ├── cp2k_shell.bat         # CP2K shell launcher (opens WSL, starts in user home)
+│   ├── run_cp2k.bat           # Command-line calculation runner
 │   └── uninstall_wsl.ps1      # Uninstall helper script
 └── README.md
 ```
@@ -246,6 +245,7 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
 
 - **安装中实时进度**
   - 步骤 1/3：导入 CP2K 运行环境（约 2-4 分钟）
+  - ↳ 复制示例输入文件到 `C:\CP2K\examples\`
   - 步骤 2/3：配置系统环境变量
   - 步骤 3/3：清理临时文件
 
@@ -271,16 +271,14 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
 
 安装完成后，桌面会出现 **CP2K** 快捷方式。
 
-**方法一（最简单）：拖拽运行**
-- 直接把 `.inp` 输入文件**拖到桌面 CP2K 图标上**，自动开始计算
-
-**方法二：命令行运行**
+**运行计算：**
 - 双击桌面 CP2K 图标，打开命令行后输入：
   ```
   cp2k -i 你的文件.inp
   ```
+  Shell 启动后自动定位到你的 Windows 用户主目录（`C:\Users\用户名`），桌面和文档里的文件可以直接访问。
 
-**示例文件位置：** `C:\CP2K\examples\`
+**示例文件位置：** `C:\CP2K\examples\`（默认安装路径，如安装到其他位置请对应调整）
 
 ---
 
@@ -327,8 +325,8 @@ cp2k-windows-installer/
 │   ├── cp2k_setup.iss         # Inno Setup 安装包脚本（中英双语界面）
 │   └── cp2k.ico               # 应用程序图标（多分辨率）
 ├── scripts/
-│   ├── cp2k_shell.bat         # CP2K 命令行启动脚本
-│   ├── run_cp2k.bat           # 拖拽运行脚本
+│   ├── cp2k_shell.bat         # CP2K 命令行启动脚本（启动于用户主目录）
+│   ├── run_cp2k.bat           # 命令行计算运行脚本
 │   └── uninstall_wsl.ps1      # 卸载辅助脚本
 └── README.md
 ```

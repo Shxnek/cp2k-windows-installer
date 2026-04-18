@@ -2,8 +2,7 @@
 chcp 65001 >nul 2>&1
 REM ============================================
 REM  CP2K Run Script
-REM  Usage: drag your .inp file onto this icon
-REM     or: run_cp2k.bat input.inp
+REM  Usage: run_cp2k.bat input.inp
 REM ============================================
 
 setlocal
@@ -14,13 +13,9 @@ if "%~1"=="" (
     echo  =====================================================
     echo.
     echo  Usage / 用法:
-    echo    Drag a .inp file onto this icon to run
-    echo    直接把 .inp 文件拖拽到本图标上运行
+    echo    run_cp2k.bat yourfile.inp
     echo.
-    echo    Or from command line / 或命令行输入:
-    echo      run_cp2k.bat input.inp
-    echo.
-    echo  Example files / 示例文件: C:\CP2K\examples
+    echo  Example files / 示例文件: %~dp0examples
     echo.
     pause
     exit /b 0
@@ -45,7 +40,7 @@ echo  Input / 输入文件: %INPUT_NAME%
 echo  Directory / 工作目录: %INPUT_DIR%
 echo.
 
-wsl -d CP2K -- bash -c "export CP2K_DATA_DIR=/usr/share/cp2k/data; cd '%WSL_PATH%' && cp2k -i '%INPUT_NAME%' 2>&1"
+wsl -d CP2K -- bash -c "export CP2K_DATA_DIR=/opt/conda/share/cp2k/data; cd '%WSL_PATH%' && cp2k -i '%INPUT_NAME%' 2>&1"
 
 if %ERRORLEVEL% EQU 0 (
     echo.
