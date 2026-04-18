@@ -14,8 +14,11 @@
 ## Download
 
 1. Click the **Actions** tab at the top of the page
+   <img width="1635" height="299" alt="5e72a199425a2024152714b0ba9e4ccb" src="https://github.com/user-attachments/assets/87617604-f057-44f1-a588-4d9b62a8ebec" />
 2. Click the latest entry with a green checkmark
+   <img width="1470" height="528" alt="9ccb80869028a30441ad89ab3adec894" src="https://github.com/user-attachments/assets/05ed9370-4c8c-48c4-8206-f78b276048e6" />
 3. Scroll to the bottom and click the installer under **Artifacts** → `CP2K-Windows-installer`
+   <img width="2150" height="1229" alt="ab27a5e719b4b66e670d7b128cd11d61" src="https://github.com/user-attachments/assets/60579bc7-610f-481d-bf8f-24e3f4ff6160" />
 4. Unzip the `.zip` file to get `CP2K_2026.1_Windows_Setup.exe`
 5. Right-click → **Run as administrator** and follow the prompts
 
@@ -188,8 +191,11 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
 ## 下载安装包
 
 1. 点击页面顶部的 **Actions** 标签
+   <img width="1635" height="299" alt="5e72a199425a2024152714b0ba9e4ccb" src="https://github.com/user-attachments/assets/87617604-f057-44f1-a588-4d9b62a8ebec" />
 2. 点击最新一条带绿色勾的记录
+   <img width="1470" height="528" alt="9ccb80869028a30441ad89ab3adec894" src="https://github.com/user-attachments/assets/05ed9370-4c8c-48c4-8206-f78b276048e6" />
 3. 拉到页面底部，点击 **Artifacts** 下的 `CP2K-Windows-installer` 下载
+   <img width="2150" height="1229" alt="ab27a5e719b4b66e670d7b128cd11d61" src="https://github.com/user-attachments/assets/60579bc7-610f-481d-bf8f-24e3f4ff6160" />
 4. 解压 `.zip` 文件，得到 `CP2K_2026.1_Windows_Setup.exe`
 5. 右键 → **以管理员身份运行**，按提示完成安装
 
