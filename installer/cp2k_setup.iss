@@ -2,7 +2,7 @@
 ; Automatically compiled by GitHub Actions
 
 #define AppName "CP2K"
-#define AppVersion "2024"
+#define AppVersion "2025.1"
 #define AppURL "https://www.cp2k.org"
 
 [Setup]
@@ -121,6 +121,20 @@ Name: "{userdesktop}\{cm:DesktopLink}"; Filename: "{app}\cp2k_shell.bat"; Workin
 Filename: "wsl.exe"; Parameters: "--unregister CP2K"; Flags: runhidden
 
 [Code]
+
+// Refresh Windows icon/shell cache so shortcuts show the correct icon immediately
+procedure SHChangeNotify(wEventId: Integer; uFlags: Cardinal; dwItem1, dwItem2: Longint);
+  external 'SHChangeNotify@shell32.dll stdcall';
+
+procedure RefreshShellIcons;
+var
+  ResultCode: Integer;
+begin
+  // Notify shell that file associations changed → redraws all icons
+  SHChangeNotify($08000000, $0000, 0, 0);
+  // Also run ie4uinit to flush the on-disk icon cache (Windows 10/11)
+  Exec('ie4uinit.exe', '-show', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+end;
 
 var
   ProgressPage: TOutputProgressWizardPage;
@@ -255,6 +269,9 @@ begin
   finally
     ProgressPage.Hide;
   end;
+
+  // Refresh Windows icon cache so the desktop shortcut icon renders crisply
+  RefreshShellIcons;
 end;
 
 // ────────────────────────────────────────────────

@@ -1,34 +1,37 @@
 @echo off
+chcp 65001 >nul 2>&1
 REM ============================================
-REM  CP2K 运行脚本
-REM  用法: 把此文件拖到你的 .inp 文件上
-REM     或: cp2k.bat 输入文件.inp
+REM  CP2K Run Script
+REM  Usage: drag your .inp file onto this icon
+REM     or: run_cp2k.bat input.inp
 REM ============================================
 
 setlocal
 
 if "%~1"=="" (
     echo.
-    echo  CP2K - 量子化学计算软件
-    echo  ========================
+    echo  CP2K - Quantum Chemistry Software / 量子化学计算软件
+    echo  =====================================================
     echo.
-    echo  用法:
+    echo  Usage / 用法:
+    echo    Drag a .inp file onto this icon to run
     echo    直接把 .inp 文件拖拽到本图标上运行
-    echo    或在命令行输入: cp2k.bat ^<你的文件.inp^>
     echo.
-    echo  示例文件位置: C:\CP2K\examples
+    echo    Or from command line / 或命令行输入:
+    echo      run_cp2k.bat input.inp
+    echo.
+    echo  Example files / 示例文件: C:\CP2K\examples
     echo.
     pause
     exit /b 0
 )
 
-REM 获取输入文件的完整路径
+REM Get full path of input file
 set "INPUT_FILE=%~f1"
 set "INPUT_DIR=%~dp1"
 set "INPUT_NAME=%~nx1"
 
-REM 将 Windows 路径转换为 WSL 路径
-REM 例如: C:\Users\xxx\test.inp -> /mnt/c/Users/xxx/test.inp
+REM Convert Windows path to WSL path (e.g. C:\Users\x\test.inp -> /mnt/c/Users/x/test.inp)
 set "WSL_DIR=%INPUT_DIR:~0,1%"
 set "WSL_DIR=%WSL_DIR:C=c%"
 set "WSL_DIR=%WSL_DIR:D=d%"
@@ -37,19 +40,19 @@ set "WSL_PATH=/mnt/%WSL_DIR%/%INPUT_DIR:~3%"
 set "WSL_PATH=%WSL_PATH:\=/%"
 
 echo.
-echo  正在运行 CP2K...
-echo  输入文件: %INPUT_NAME%
-echo  工作目录: %INPUT_DIR%
+echo  Running CP2K / 正在运行 CP2K...
+echo  Input / 输入文件: %INPUT_NAME%
+echo  Directory / 工作目录: %INPUT_DIR%
 echo.
 
-wsl -d CP2K -- bash -c "cd '%WSL_PATH%' && cp2k -i '%INPUT_NAME%' 2>&1"
+wsl -d CP2K -- bash -c "export CP2K_DATA_DIR=/usr/share/cp2k/data; cd '%WSL_PATH%' && cp2k -i '%INPUT_NAME%' 2>&1"
 
 if %ERRORLEVEL% EQU 0 (
     echo.
-    echo  计算完成！
+    echo  Calculation complete! / 计算完成！
 ) else (
     echo.
-    echo  运行出错，请检查输入文件是否正确。
+    echo  Error: please check your input file. / 运行出错，请检查输入文件。
 )
 
 echo.

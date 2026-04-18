@@ -23,15 +23,38 @@ jobs:
           distribution: Ubuntu-22.04
           use-cache: 'false'
 
-      # ── 第3步：在 Ubuntu 里安装 CP2K ──
-      - name: 在 Ubuntu 中安装 CP2K
+      # ── 第3步：安装 CP2K 2025.1（官方预编译二进制）──
+      - name: 安装 CP2K 2025.1 / Install CP2K 2025.1
         shell: wsl-bash {0}
         run: |
           apt-get update -qq
-          apt-get install -y cp2k cp2k-data
-          # 验证安装成功
-          cp2k --version
-          echo "CP2K 安装成功"
+          apt-get install -y libgomp1 wget
+
+          # 下载官方预编译二进制（689 MB，OpenMP 并行版）
+          echo "Downloading CP2K 2025.1 binary (~689 MB)..."
+          wget -q --show-progress \
+            "https://github.com/cp2k/cp2k/releases/download/v2025.1/cp2k-2025.1-Linux-gnu-x86_64.ssmp" \
+            -O /usr/local/bin/cp2k
+          chmod +x /usr/local/bin/cp2k
+
+          # 下载源码包并提取数据文件（BASIS_SETS / POTENTIAL 等）
+          echo "Downloading CP2K data files (~70 MB)..."
+          wget -q \
+            "https://github.com/cp2k/cp2k/releases/download/v2025.1/cp2k-2025.1.tar.bz2" \
+            -O /tmp/cp2k.tar.bz2
+          mkdir -p /usr/share/cp2k
+          tar -xjf /tmp/cp2k.tar.bz2 -C /tmp/ cp2k-2025.1/data/
+          mv /tmp/cp2k-2025.1/data /usr/share/cp2k/data
+          rm /tmp/cp2k.tar.bz2
+
+          # 设置数据目录环境变量（所有 shell 类型均可读取）
+          echo 'export CP2K_DATA_DIR=/usr/share/cp2k/data' > /etc/profile.d/cp2k.sh
+          chmod +x /etc/profile.d/cp2k.sh
+          echo 'CP2K_DATA_DIR=/usr/share/cp2k/data' >> /etc/environment
+
+          # 验证安装
+          CP2K_DATA_DIR=/usr/share/cp2k/data /usr/local/bin/cp2k --version
+          echo "CP2K 2025.1 installed successfully"
 
       # ── 第4步：导出 WSL 镜像 ──
       - name: 导出 WSL 镜像
@@ -84,7 +107,7 @@ jobs:
       - name: 上传安装包
         uses: actions/upload-artifact@v4
         with:
-          name: CP2K-Windows-安装包
+          name: CP2K-Windows-installer
           path: output/*.exe
           retention-days: 30  # 保存 30 天
 
