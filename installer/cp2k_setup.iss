@@ -87,6 +87,32 @@ chinesesimplified.DoneDesc=CP2K 已成功安装到你的电脑。
 english.CheckingWSL=Checking system environment, please wait…
 chinesesimplified.CheckingWSL=正在检测系统环境，请稍候…
 
+; ----- WSL2 enabling progress (shown when user clicks Yes to enable WSL2) -----
+english.EnablingWSLTitle=Enabling WSL2
+english.EnablingWSLDesc=Please wait. This may take 1–2 minutes — do not close the window.
+english.EnablingWSLStep1=Step 1 / 3: Installing WSL2 and Linux kernel via Windows…
+english.EnablingWSLStep2=Step 1a / 3: Enabling Windows Subsystem for Linux feature…
+english.EnablingWSLStep3=Step 2 / 3: Enabling Virtual Machine Platform feature…
+english.EnablingWSLStep4=Step 3 / 3: Setting WSL2 as default version…
+
+chinesesimplified.EnablingWSLTitle=正在启用 WSL2
+chinesesimplified.EnablingWSLDesc=请耐心等待，可能需要 1-2 分钟，请勿关闭窗口。
+chinesesimplified.EnablingWSLStep1=步骤 1 / 3：正在通过 Windows 安装 WSL2 和 Linux 内核…
+chinesesimplified.EnablingWSLStep2=步骤 1a / 3：正在启用 Windows 子系统（Linux）功能…
+chinesesimplified.EnablingWSLStep3=步骤 2 / 3：正在启用虚拟机平台功能…
+chinesesimplified.EnablingWSLStep4=步骤 3 / 3：正在将 WSL2 设为默认版本…
+
+; ----- Restart countdown (shown after WSL2 enabling, user can cancel) -----
+english.RestartTitle=Your Computer Will Restart
+english.RestartDesc=WSL2 has been enabled successfully.%n%nYour computer will restart automatically in %1 seconds.%n%nClick "Cancel Restart" below to stop the automatic restart.
+english.RestartCancelBtn=Cancel Restart
+english.RestartCancelledMsg=Automatic restart cancelled.%n%nPlease restart your computer manually to complete WSL2 setup,%nthen run this installer again.
+
+chinesesimplified.RestartTitle=电脑即将重启
+chinesesimplified.RestartDesc=WSL2 已成功启用。%n%n电脑将在 %1 秒后自动重启。%n%n点击下方"取消重启"按钮可中止自动重启。
+chinesesimplified.RestartCancelBtn=取消重启
+chinesesimplified.RestartCancelledMsg=已取消自动重启。%n%n请手动重启电脑以完成 WSL2 配置，%n重启后再次运行本安装程序。
+
 ; ----- Error / warning messages  (%1 = runtime parameter) -----
 english.ErrOSVersion=Your operating system is not supported.%n%nWindows 10 2004 (Build 19041) or later is required.%nPlease update Windows and run the installer again.
 english.ErrDiskSpace=Insufficient disk space.%n%nAt least 6 GB of free space on drive C is required.%nCurrent free space: %1 GB%n%nPlease free up space and retry. Continue anyway?
@@ -130,7 +156,12 @@ Name: "{userdesktop}\{cm:DesktopLink}"; Filename: "{app}\cp2k_shell.bat"; Workin
 Type: filesandordirs; Name: "{app}\examples"
 
 [UninstallRun]
+; 注销 WSL 发行版
 Filename: "wsl.exe"; Parameters: "--unregister CP2K"; Flags: runhidden
+; 从系统 PATH 中移除 CP2K 安装目录
+Filename: "powershell.exe"; \
+  Parameters: "-NoProfile -ExecutionPolicy Bypass -Command ""$p=[Environment]::GetEnvironmentVariable('Path','Machine'); $p=($p -split ';' | Where-Object {{ $_ -notlike '*CP2K*' }}) -join ';'; [Environment]::SetEnvironmentVariable('Path',$p,'Machine')"""; \
+  Flags: runhidden waituntilterminated
 
 [Code]
 
@@ -149,7 +180,103 @@ begin
 end;
 
 var
-  ProgressPage: TOutputProgressWizardPage;
+  ProgressPage        : TOutputProgressWizardPage;
+  // Restart countdown form components (used after WSL2 enabling)
+  RestartForm         : TForm;
+  RestartLabel        : TLabel;
+  CancelRestartBtn    : TButton;
+  RestartTimer        : TTimer;
+  RestartSeconds      : Integer;
+  RestartCancelledFlag: Boolean;
+  // When True, CancelButtonClick will skip the "are you sure?" confirmation
+  SilentCancel        : Boolean;
+
+// ────────────────────────────────────────────────
+// Restart countdown: timer tick — update label and auto-close at 0
+// ────────────────────────────────────────────────
+procedure OnRestartTimerTick(Sender: TObject);
+begin
+  RestartSeconds := RestartSeconds - 1;
+  RestartLabel.Caption :=
+    FmtMessage(CustomMessage('RestartDesc'), [IntToStr(RestartSeconds)]);
+  if RestartSeconds <= 0 then begin
+    RestartTimer.Enabled := False;
+    RestartForm.Close;   // countdown reached 0, OS will restart momentarily
+  end;
+end;
+
+// Cancel button: abort the scheduled OS restart
+procedure OnCancelRestartClick(Sender: TObject);
+var
+  RC: Integer;
+begin
+  RestartCancelledFlag := True;
+  RestartTimer.Enabled := False;
+  Exec('shutdown.exe', '/a', '', SW_HIDE, ewWaitUntilTerminated, RC);
+  RestartForm.Close;
+end;
+
+// Show countdown dialog and schedule OS restart
+procedure ShowRestartCountdown;
+var
+  RC: Integer;
+begin
+  RestartSeconds      := 60;
+  RestartCancelledFlag := False;
+
+  // Schedule OS restart in 60 s (command returns immediately)
+  Exec('shutdown.exe',
+    '/r /t 60 /c "WSL2 enabled — restarting for CP2K setup."',
+    '', SW_HIDE, ewWaitUntilTerminated, RC);
+
+  // Build the countdown dialog
+  RestartForm := TForm.Create(WizardForm);
+  RestartForm.Caption     := CustomMessage('RestartTitle');
+  RestartForm.ClientWidth  := 420;
+  RestartForm.ClientHeight := 170;
+  RestartForm.Position    := poScreenCenter;
+  RestartForm.BorderStyle := bsDialog;
+
+  RestartLabel := TLabel.Create(RestartForm);
+  RestartLabel.Parent   := RestartForm;
+  RestartLabel.Left     := 16;
+  RestartLabel.Top      := 16;
+  RestartLabel.Width    := 388;
+  RestartLabel.Height   := 100;
+  RestartLabel.AutoSize := False;
+  RestartLabel.WordWrap := True;
+  RestartLabel.Caption  :=
+    FmtMessage(CustomMessage('RestartDesc'), [IntToStr(RestartSeconds)]);
+
+  CancelRestartBtn := TButton.Create(RestartForm);
+  CancelRestartBtn.Parent  := RestartForm;
+  CancelRestartBtn.Caption := CustomMessage('RestartCancelBtn');
+  CancelRestartBtn.Width   := 150;
+  CancelRestartBtn.Height  := 32;
+  CancelRestartBtn.Left    := (420 - 150) div 2;
+  CancelRestartBtn.Top     := 124;
+  CancelRestartBtn.OnClick := @OnCancelRestartClick;
+
+  RestartTimer := TTimer.Create(RestartForm);
+  RestartTimer.Interval := 1000;   // fire every 1 second
+  RestartTimer.OnTimer  := @OnRestartTimerTick;
+  RestartTimer.Enabled  := True;
+
+  RestartForm.ShowModal;
+  RestartForm.Free;
+
+  if RestartCancelledFlag then
+    MsgBox(CustomMessage('RestartCancelledMsg'), mbInformation, MB_OK);
+end;
+
+// ────────────────────────────────────────────────
+// Skip the "are you sure you want to cancel?" dialog when SilentCancel is set
+// ────────────────────────────────────────────────
+procedure CancelButtonClick(CurPageID: Integer; var Cancel, Confirm: Boolean);
+begin
+  if SilentCancel then
+    Confirm := False;  // exit immediately without extra confirmation prompt
+end;
 
 // ────────────────────────────────────────────────
 // Pre-install checks: OS version + disk space only
@@ -198,18 +325,80 @@ begin
     WizardForm.StatusLabel.Caption := CustomMessage('CheckingWSL');
     WizardForm.Update;
 
-    if not Exec('wsl.exe', '--status', '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
+    // Use "wsl --version" as the WSL2 readiness check:
+    //   • exits 0  → WSL2 kernel is installed and ready
+    //   • exits non-0 → WSL not present, not enabled, or kernel missing
+    // (More reliable than --status which can exit non-0 even when WSL is usable)
+    if not Exec('wsl.exe', '--version', '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
        or (ResultCode <> 0) then begin
       WizardForm.StatusLabel.Caption := '';
+
       if MsgBox(CustomMessage('ErrWSL2Prompt'), mbConfirmation, MB_YESNO) = IDYES then begin
-        Exec('dism.exe',
-          '/online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart',
+
+        // ── Show progress while enabling WSL2 ──
+        ProgressPage.SetText(
+          CustomMessage('EnablingWSLTitle'),
+          CustomMessage('EnablingWSLDesc')
+        );
+        ProgressPage.SetProgress(5, 100);
+        ProgressPage.Show;
+
+        // ── Method 1: wsl --install --no-distribution ──
+        // Available on Windows 10 21H2+ and all Windows 11 builds.
+        // Handles BOTH enabling the features AND installing the kernel in one step.
+        ProgressPage.SetText(
+          CustomMessage('EnablingWSLTitle'),
+          CustomMessage('EnablingWSLStep1')
+        );
+        ProgressPage.SetProgress(10, 100);
+        Exec('wsl.exe', '--install --no-distribution',
           '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-        Exec('dism.exe',
-          '/online /enable-feature /featurename:VirtualMachinePlatform /all /norestart',
+
+        if ResultCode <> 0 then begin
+          // ── Method 2: DISM fallback (older Windows 10 builds) ──
+          // NOTE: DISM alone does NOT install the WSL2 kernel;
+          //       the user will still need the kernel MSI after reboot on Win10.
+          ProgressPage.SetText(
+            CustomMessage('EnablingWSLTitle'),
+            CustomMessage('EnablingWSLStep2')
+          );
+          ProgressPage.SetProgress(25, 100);
+          Exec('dism.exe',
+            '/online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart',
+            '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+
+          ProgressPage.SetText(
+            CustomMessage('EnablingWSLTitle'),
+            CustomMessage('EnablingWSLStep3')
+          );
+          ProgressPage.SetProgress(55, 100);
+          Exec('dism.exe',
+            '/online /enable-feature /featurename:VirtualMachinePlatform /all /norestart',
+            '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+        end;
+
+        // ── Always: set WSL2 as the default version ──
+        ProgressPage.SetText(
+          CustomMessage('EnablingWSLTitle'),
+          CustomMessage('EnablingWSLStep4')
+        );
+        ProgressPage.SetProgress(90, 100);
+        Exec('wsl.exe', '--set-default-version 2',
           '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-        MsgBox(CustomMessage('ErrWSL2Enabled'), mbInformation, MB_OK);
+
+        ProgressPage.SetProgress(100, 100);
+        ProgressPage.Hide;
+
+        // Show countdown dialog and schedule OS restart;
+        // user can click "Cancel Restart" to abort.
+        ShowRestartCountdown;
+      end else begin
+        // User clicked No — they declined to enable WSL2.
+        // Exit the installer immediately (no second "are you sure?" prompt).
+        SilentCancel := True;
+        WizardForm.Close;
       end;
+
       Result := False;
       Exit;
     end;
