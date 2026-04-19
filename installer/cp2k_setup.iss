@@ -56,63 +56,21 @@ chinesesimplified.StartMenuReadme=CP2K 使用说明
 chinesesimplified.StartMenuUninstall=卸载 CP2K
 chinesesimplified.DesktopLink=CP2K
 
-; ----- Progress page -----
-english.ProgressTitle=Installing CP2K
-english.ProgressDesc=Please wait while the installer completes all configuration…
-english.Step1Title=Step 1 / 3: Importing CP2K Runtime
-english.Step1Desc=Decompressing and importing the runtime environment. This usually takes 2–4 minutes — please do not close the window…
-english.Step2Title=Step 2 / 3: Configuring Environment Variables
-english.Step2Desc=Adding CP2K to PATH so it can be used from any command-line window…
-english.Step3Title=Step 3 / 3: Cleaning Up Temporary Files
-english.Step3Desc=Removing temporary files created during installation to free up disk space…
-english.DoneTitle=Installation Complete!
-english.DoneDesc=CP2K has been successfully installed on your computer.
-
-chinesesimplified.ProgressTitle=正在安装 CP2K
-chinesesimplified.ProgressDesc=请耐心等待，安装程序正在自动完成所有配置…
-chinesesimplified.Step1Title=步骤 1 / 3：导入 CP2K 运行环境
-chinesesimplified.Step1Desc=正在解压并导入运行环境，通常需要 2-4 分钟，请勿关闭窗口…
-chinesesimplified.Step2Title=步骤 2 / 3：配置系统环境变量
-chinesesimplified.Step2Desc=将 CP2K 添加到 PATH，以便在任意命令行窗口中直接使用…
-chinesesimplified.Step3Title=步骤 3 / 3：清理临时文件
-chinesesimplified.Step3Desc=正在删除安装过程产生的临时文件，释放磁盘空间…
-chinesesimplified.DoneTitle=安装完成！
-chinesesimplified.DoneDesc=CP2K 已成功安装到你的电脑。
-
-; ----- WSL check status (shown while checking, after welcome page) -----
-english.CheckingWSLTitle=Checking System Environment
-english.CheckingWSLDesc=Verifying that WSL2 is available. This takes a few seconds — please wait…
-chinesesimplified.CheckingWSLTitle=正在检测系统环境
-chinesesimplified.CheckingWSLDesc=正在检测 WSL2 是否已启用，请稍候几秒钟…
-
-; ----- WSL2 enabling progress (shown when user clicks Yes to enable WSL2) -----
-english.EnablingWSLTitle=Enabling WSL2
-english.EnablingWSLDesc=Please wait. This may take 1–2 minutes — do not close the window.
-english.EnablingWSLStep1=Step 1 / 3: Installing WSL2 and Linux kernel via Windows…
-english.EnablingWSLStep2=Step 1a / 3: Enabling Windows Subsystem for Linux feature…
-english.EnablingWSLStep3=Step 1b / 3: Enabling Virtual Machine Platform feature…
-english.EnablingWSLStep4=Step 2 / 3: Installing WSL2 package update…
-english.EnablingWSLStep5=Step 3 / 3: Setting WSL2 as default version…
-
-chinesesimplified.EnablingWSLTitle=正在启用 WSL2
-chinesesimplified.EnablingWSLDesc=请耐心等待，可能需要 1-2 分钟，请勿关闭窗口。
-chinesesimplified.EnablingWSLStep1=步骤 1 / 3：正在通过 Windows 安装 WSL2 和 Linux 内核…
-chinesesimplified.EnablingWSLStep2=步骤 1a / 3：正在启用 Windows 子系统（Linux）功能…
-chinesesimplified.EnablingWSLStep3=步骤 1b / 3：正在启用虚拟机平台功能…
-chinesesimplified.EnablingWSLStep4=步骤 2 / 3：正在安装 WSL2 包更新…
-chinesesimplified.EnablingWSLStep5=步骤 3 / 3：正在将 WSL2 设为默认版本…
+; ----- Console window "was closed prematurely" error -----
+english.ErrConsoleClosed=The console window was closed before the command finished.%nWSL2 may be in a half-configured state.%n%nPlease run the installer again and let the console window close on its own.
+chinesesimplified.ErrConsoleClosed=命令行窗口在命令完成前被关闭。%nWSL2 可能处于未完成配置的状态。%n%n请重新运行安装程序，并等待命令行窗口自动关闭。
 
 ; ----- Restart prompt (shown after WSL2 enabling) -----
-english.RestartPrompt=WSL2 setup is complete — a restart is required to activate it.%n%nWSL2 will not be available until after the restart.%n%nWould you like to restart now?
+english.RestartPrompt=WSL2 setup is complete — a restart is required to activate it.%n%nIf you click Yes, the computer will restart and the installer will resume automatically after you log back in.%n%nRestart now?
 english.RestartCancelledMsg=Restart skipped.%n%nWSL2 is not yet active. Please restart your computer manually,%nthen run this installer again.
 
-chinesesimplified.RestartPrompt=WSL2 功能已配置，重启后才会正式生效。%n%n重启完成前 WSL2 尚不可用。%n%n是否立即重启？
+chinesesimplified.RestartPrompt=WSL2 功能已配置，重启后才会正式生效。%n%n点击"是"将立即重启电脑，登录后安装程序会自动继续。%n%n是否立即重启？
 chinesesimplified.RestartCancelledMsg=已跳过重启。%n%nWSL2 尚未激活，请手动重启电脑，%n重启完成后再次运行本安装程序。
 
 ; ----- Error / warning messages  (%1 = runtime parameter) -----
 english.ErrOSVersion=Your operating system is not supported.%n%nWindows 10 2004 (Build 19041) or later is required.%nPlease update Windows and run the installer again.
 english.ErrDiskSpace=Insufficient disk space.%n%nAt least 6 GB of free space on drive C is required.%nCurrent free space: %1 GB%n%nPlease free up space and retry. Continue anyway?
-english.ErrWSL2Prompt=WSL2 not detected.%n%nCP2K requires the Windows Subsystem for Linux (WSL2).%nClick Yes to enable WSL2 automatically.%nYour computer will need to restart; run the installer again afterwards.
+english.ErrWSL2Prompt=WSL2 not detected.%n%nCP2K requires the Windows Subsystem for Linux (WSL2).%nClick Yes to enable WSL2 automatically.%n%nA console window will open and show live output of the enabling commands.%nIt closes automatically when done (about 1–3 minutes). DO NOT close it manually.%n%nYour computer will restart afterwards, and the installer will resume on its own.
 english.ErrWSL2PendingRestart=WSL2 has already been enabled in this session.%n%nPlease restart your computer first, then run this installer again.
 english.ErrWSL2KernelNote=Additional step required for Windows 10:%n%nAfter restarting, download and install the WSL2 Linux kernel update package:%n    https://aka.ms/wsl2kernel%n%nThen run this installer again.
 english.ErrWSL2EnvFail=Failed to import runtime environment (error code: %1).%n%nSuggested fixes:%n  1. Restart your computer and run the installer again%n  2. Enable WSL manually via "Turn Windows features on or off"%n  3. Ensure virtualisation (VT-x / AMD-V) is enabled in BIOS%n%nFor further help visit https://www.cp2k.org
@@ -120,7 +78,7 @@ english.WarnEnvVar=Environment variable configuration failed — this will not a
 
 chinesesimplified.ErrOSVersion=系统版本不符合要求。%n%n需要 Windows 10 2004（Build 19041）或更高版本。%n当前系统版本过低，请先更新 Windows 再安装。
 chinesesimplified.ErrDiskSpace=C 盘可用空间不足。%n%n安装 CP2K 至少需要 6GB 可用空间。%n当前 C 盘剩余空间：%1 GB%n%n建议清理磁盘后重试。是否仍要继续安装？
-chinesesimplified.ErrWSL2Prompt=未检测到 WSL2。%n%nCP2K 需要 Windows 子系统（WSL2）才能运行。%n点击"是"将自动启用 WSL2，完成后需重启电脑，%n重启后请再次运行安装程序。
+chinesesimplified.ErrWSL2Prompt=未检测到 WSL2。%n%nCP2K 需要 Windows 子系统（WSL2）才能运行。%n点击"是"将自动启用 WSL2。%n%n即将弹出命令行窗口，实时显示启用过程的命令输出。%n整个过程约 1-3 分钟，完成后窗口会自动关闭。请勿手动关闭。%n%n随后电脑会自动重启，重启后安装程序会自动继续。
 chinesesimplified.ErrWSL2PendingRestart=本次会话中已启用过 WSL2。%n%n请先重启电脑，重启完成后再次运行本安装程序。
 chinesesimplified.ErrWSL2KernelNote=Windows 10 用户需额外操作：%n%n重启完成后，请下载并安装 WSL2 Linux 内核更新包：%n    https://aka.ms/wsl2kernel%n%n安装完成后再次运行本安装程序。
 chinesesimplified.ErrWSL2EnvFail=运行环境导入失败（错误码：%1）。%n%n请尝试以下解决方法：%n  1. 重启电脑后重新运行安装程序%n  2. 在"开启或关闭 Windows 功能"中手动启用 WSL%n  3. 确认 BIOS 中已开启虚拟化（Virtualization）%n%n如问题持续，请访问 https://www.cp2k.org 获取帮助。
@@ -197,39 +155,245 @@ begin
 end;
 
 var
-  ProgressPage : TOutputProgressWizardPage;
   // Marks that WSL2 enablement has been attempted in this session;
-  // used to prevent re-running the enable flow if the user declines
-  // the restart and then clicks Next again.
+  // prevents re-running the enable flow if the user declines the restart
+  // and then clicks Next again.
   WSL2Triggered : Boolean;
   // True when wsl --install --no-distribution failed and we fell back to DISM.
-  // Used to decide whether to show the Win10 manual-kernel-update note:
-  // if wsl --install succeeded (and wsl --update ran), the kernel is already
-  // installed and the note would be misleading.
+  // Controls whether to show the Win10 manual-kernel-update note:
+  // if wsl --install succeeded, the kernel is already installed and the note
+  // would be misleading.  Detected via a flag file written by the batch script.
   UsedDismFallback : Boolean;
 
+// ────────────────────────────────────────────────
+// Core helper: write a batch script to {tmp}, then run it in a VISIBLE cmd
+// window via Sysnative cmd.exe.  Returns the batch's exit code.
+//
+// Why Sysnative?  Our 32-bit installer would otherwise spawn 32-bit cmd.exe
+// from SysWOW64, inheriting WOW64 file-system redirection — which turns any
+// reference to wsl.exe / dism.exe inside the script into a lookup in SysWOW64,
+// where neither exists.  Invoking via {sysnative}\cmd.exe forces a native
+// 64-bit cmd with no redirection, so wsl / dism resolve normally.
+//
+// The batch file itself is written in UTF-8 without BOM so `chcp 65001` at the
+// top switches the console to UTF-8 and @echo off stays intact (a BOM would
+// print as visible garbage on the first line).
+// ────────────────────────────────────────────────
+function RunVisibleBatch(const Lines: TArrayOfString; const BatName: String;
+  var ExitCode: Integer): Boolean;
+var
+  BatPath: String;
+begin
+  BatPath := ExpandConstant('{tmp}\') + BatName;
+  SaveStringsToUTF8FileWithoutBOM(BatPath, Lines, False);
+  // /C ""path"" — the outer/inner quote pair is the safest way to pass a
+  // path containing spaces through cmd's /C argument parsing.
+  Result := Exec(SysPath('cmd.exe'), '/C ""' + BatPath + '""',
+    '', SW_SHOWNORMAL, ewWaitUntilTerminated, ExitCode);
+  SetForegroundWindow(WizardForm.Handle);
+end;
+
+// ────────────────────────────────────────────────
+// Generate + run the WSL2 enabling batch in a visible cmd window.
+// The user sees each wsl/dism command's live output as it runs.
+// A flag file is written if the DISM fallback path was taken.
+// ────────────────────────────────────────────────
+// Returns True if the batch ran to completion (done sentinel present).
+// False means either Exec failed to launch OR the user closed the cmd window
+// before it finished — in either case WSL2 is in an unknown state.
+function RunWSLEnableVisible: Boolean;
+var
+  Lines: TArrayOfString;
+  FlagPath, DonePath: String;
+  RC: Integer;
+begin
+  Result := False;
+
+  FlagPath := ExpandConstant('{tmp}\cp2k_dism_fallback.flag');
+  if FileExists(FlagPath) then DeleteFile(FlagPath);
+  DonePath := ExpandConstant('{tmp}\cp2k_enable_done.flag');
+  if FileExists(DonePath) then DeleteFile(DonePath);
+
+  SetArrayLength(Lines, 40);
+  Lines[ 0] := '@echo off';
+  Lines[ 1] := 'chcp 65001 >nul 2>&1';
+  Lines[ 2] := 'title CP2K Installer - Enabling WSL2';
+  Lines[ 3] := 'color 0B';
+  Lines[ 4] := 'cls';
+  Lines[ 5] := 'echo.';
+  Lines[ 6] := 'echo ==================================================';
+  Lines[ 7] := 'echo   CP2K Installer - Enabling WSL2';
+  Lines[ 8] := 'echo   This window shows live command output.';
+  Lines[ 9] := 'echo   It will close automatically when finished.';
+  Lines[10] := 'echo   DO NOT close this window manually.';
+  Lines[11] := 'echo ==================================================';
+  Lines[12] := 'echo.';
+  Lines[13] := 'echo --------------------------------------------------';
+  Lines[14] := 'echo [Step 1/3] wsl --install --no-distribution';
+  Lines[15] := 'echo --------------------------------------------------';
+  Lines[16] := 'wsl.exe --install --no-distribution';
+  Lines[17] := 'set INSTALL_RC=%ERRORLEVEL%';
+  Lines[18] := 'if not "%INSTALL_RC%"=="0" (';
+  Lines[19] := '    echo.';
+  Lines[20] := '    echo wsl --install returned %INSTALL_RC% - using DISM fallback';
+  Lines[21] := '    echo --------------------------------------------------';
+  Lines[22] := '    echo [Step 1a/3] Enabling Windows Subsystem for Linux';
+  Lines[23] := '    echo --------------------------------------------------';
+  Lines[24] := '    dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart';
+  Lines[25] := '    echo.';
+  Lines[26] := '    echo --------------------------------------------------';
+  Lines[27] := '    echo [Step 1b/3] Enabling Virtual Machine Platform';
+  Lines[28] := '    echo --------------------------------------------------';
+  Lines[29] := '    dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart';
+  Lines[30] := '    > "' + FlagPath + '" echo 1';
+  Lines[31] := ')';
+  Lines[32] := 'echo.';
+  Lines[33] := 'echo --------------------------------------------------';
+  Lines[34] := 'echo [Step 2/3] wsl --update';
+  Lines[35] := 'echo --------------------------------------------------';
+  // Non-fatal: on offline / already-up-to-date systems `wsl --update` prints
+  // a scary-looking error. Mark it as skipped rather than let it look failed.
+  Lines[36] := 'wsl.exe --update || echo (update step skipped - non-fatal)';
+  Lines[37] := 'echo.';
+  Lines[38] := 'echo --------------------------------------------------';
+  Lines[39] := 'echo [Step 3/3] wsl --set-default-version 2';
+  SetArrayLength(Lines, 46);
+  Lines[40] := 'echo --------------------------------------------------';
+  Lines[41] := 'wsl.exe --set-default-version 2';
+  Lines[42] := 'echo.';
+  Lines[43] := 'echo ==================================================';
+  Lines[44] := 'echo   All steps completed. Closing in 5 seconds...';
+  Lines[45] := 'echo ==================================================';
+  SetArrayLength(Lines, 49);
+  // Done-sentinel file: if this does NOT exist after Exec returns, the user
+  // closed the cmd window early and WSL2 is in an unknown state.
+  Lines[46] := '> "' + DonePath + '" echo done';
+  // /nobreak prevents the countdown being skipped by accidental keypress.
+  Lines[47] := 'timeout /t 5 /nobreak >nul';
+  Lines[48] := 'exit /b 0';
+
+  if not RunVisibleBatch(Lines, 'cp2k_enable_wsl.bat', RC) then begin
+    // Exec itself failed (permission / AV / missing cmd.exe).
+    MsgBox('Failed to launch the WSL2 enabling console window.' + #13#10 +
+           'Please check your antivirus / execution policy and retry.',
+           mbError, MB_OK);
+    Exit;
+  end;
+
+  if not FileExists(DonePath) then begin
+    MsgBox(CustomMessage('ErrConsoleClosed'), mbError, MB_OK);
+    Exit;
+  end;
+
+  UsedDismFallback := FileExists(FlagPath);
+  Result := True;
+end;
+
+// ────────────────────────────────────────────────
+// Generate + run the CP2K runtime import batch in a visible cmd window.
+// Sets ImportRC to the actual wsl --import exit code.
+// ────────────────────────────────────────────────
+procedure RunWSLImportVisible(const WslDistroDir, TarFile: String; var ImportRC: Integer);
+var
+  Lines: TArrayOfString;
+  RCPath: String;
+  S: AnsiString;
+  Launched: Boolean;
+begin
+  // Initialise to a non-zero value so that a caller who sees a non-zero RC
+  // after an Exec-level launch failure reports error rather than silently
+  // treating 0 as success.
+  ImportRC := -1;
+
+  RCPath := ExpandConstant('{tmp}\cp2k_import_rc.txt');
+  if FileExists(RCPath) then DeleteFile(RCPath);
+
+  SetArrayLength(Lines, 30);
+  Lines[ 0] := '@echo off';
+  Lines[ 1] := 'chcp 65001 >nul 2>&1';
+  Lines[ 2] := 'title CP2K Installer - Importing Runtime';
+  Lines[ 3] := 'color 0A';
+  Lines[ 4] := 'cls';
+  Lines[ 5] := 'echo.';
+  Lines[ 6] := 'echo ==================================================';
+  Lines[ 7] := 'echo   CP2K Installer - Importing CP2K Runtime';
+  Lines[ 8] := 'echo   This takes 2-4 minutes.';
+  Lines[ 9] := 'echo   The command itself does not print progress,';
+  Lines[10] := 'echo   so the screen will appear idle - this is normal.';
+  Lines[11] := 'echo   DO NOT close this window manually.';
+  Lines[12] := 'echo ==================================================';
+  Lines[13] := 'echo.';
+  Lines[14] := 'echo [1/2] Removing any previous CP2K distro (if present)...';
+  Lines[15] := 'wsl.exe --unregister CP2K 2>nul';
+  Lines[16] := 'echo.';
+  Lines[17] := 'echo [2/2] Importing CP2K distro as WSL2...';
+  Lines[18] := 'echo    target:  "' + WslDistroDir + '"';
+  Lines[19] := 'echo    source:  "' + TarFile + '"';
+  Lines[20] := 'wsl.exe --import CP2K "' + WslDistroDir + '" "' + TarFile + '" --version 2';
+  Lines[21] := 'set IMPORT_RC=%ERRORLEVEL%';
+  Lines[22] := '> "' + RCPath + '" echo %IMPORT_RC%';
+  Lines[23] := 'echo.';
+  Lines[24] := 'echo ==================================================';
+  Lines[25] := 'echo   Import finished with exit code %IMPORT_RC%';
+  Lines[26] := 'echo   Closing in 5 seconds...';
+  Lines[27] := 'echo ==================================================';
+  Lines[28] := 'timeout /t 5 /nobreak >nul';
+  Lines[29] := 'exit /b %IMPORT_RC%';
+
+  Launched := RunVisibleBatch(Lines, 'cp2k_import_wsl.bat', ImportRC);
+
+  if not Launched then begin
+    MsgBox('Failed to launch the import console window.' + #13#10 +
+           'Please check your antivirus / execution policy and retry.',
+           mbError, MB_OK);
+    ImportRC := -1;
+    Exit;
+  end;
+
+  // Prefer the exit code written by the batch — it is the true wsl --import
+  // RC, not the cmd.exe RC returned by Exec.  If the file is missing, the
+  // user closed the window before the import finished writing the RC.
+  if LoadStringFromFile(RCPath, S) then
+    ImportRC := StrToIntDef(Trim(String(S)), ImportRC)
+  else begin
+    MsgBox(CustomMessage('ErrConsoleClosed'), mbError, MB_OK);
+    ImportRC := -1;
+  end;
+end;
+
 // Ask user to restart; one confirmation before executing.
-// If the user declines, show the "restart manually" message then exit
-// immediately — leaving the user stranded on the welcome page is confusing.
+// On "Yes" we register a RunOnce entry so the installer auto-relaunches after
+// the first login post-reboot — otherwise the user has to remember to run
+// setup.exe again, which is easy to forget and the single biggest UX snag.
+// On "No" we show the manual-restart message and exit cleanly.
 procedure ShowRestartPrompt;
 var
   RC: Integer;
 begin
-  if MsgBox(CustomMessage('RestartPrompt'), mbConfirmation, MB_YESNO) = IDYES then
+  if MsgBox(CustomMessage('RestartPrompt'), mbConfirmation, MB_YESNO) = IDYES then begin
+    // RunOnce under HKLM runs once at next login as the logging-in user.
+    // Values starting with '!' make RunOnce keep the entry if the program
+    // returns non-zero — but we WANT one-shot behavior, so no leading '!'.
+    // {srcexe} is the path of the currently-running setup.exe.  Quoting it
+    // handles install paths that contain spaces.
+    RegWriteStringValue(HKEY_LOCAL_MACHINE,
+      'Software\Microsoft\Windows\CurrentVersion\RunOnce',
+      'CP2KInstallerResume',
+      '"' + ExpandConstant('{srcexe}') + '"');
+
     Exec(SysPath('shutdown.exe'), '/r /t 0 /c "WSL2 enabled — restarting for CP2K setup."',
-      '', SW_HIDE, ewWaitUntilTerminated, RC)
-  else begin
+      '', SW_HIDE, ewWaitUntilTerminated, RC);
+  end else begin
     MsgBox(CustomMessage('RestartCancelledMsg'), mbInformation, MB_OK);
-    // Close the installer so the user is not left staring at the welcome page
-    // with no clear next action.  They will re-run setup after a manual restart.
     ExitProcess(0);
   end;
 end;
 
 // ────────────────────────────────────────────────
-// WSL2 readiness check: accept either --version (Store/2.x) or
-// --status (in-box Windows 11 WSL2).  Either returning 0 means WSL2
-// is installed and functional enough to run wsl --import.
+// WSL2 readiness check — silent.  Accepts either --version (Store/2.x) or
+// --status (in-box Windows 11 WSL2).  Either returning 0 means WSL2 is
+// functional enough to run wsl --import.  Both calls are hidden since they
+// normally complete in <1 second and produce no interesting output.
 // ────────────────────────────────────────────────
 function IsWSL2Ready: Boolean;
 var
@@ -246,8 +410,8 @@ begin
 end;
 
 // ────────────────────────────────────────────────
-// Pre-install checks: OS version + disk space only
-// (WSL2 check moved to NextButtonClick to avoid blocking UI startup)
+// Pre-install checks: OS version + disk space only.
+// WSL2 check is deferred to NextButtonClick so the wizard appears first.
 // ────────────────────────────────────────────────
 function InitializeSetup(): Boolean;
 var
@@ -255,14 +419,14 @@ var
 begin
   Result := True;
 
-  // 1. Windows version (minimum Win10 2004 = Build 19041 = $4A61) — instant, safe to run before UI
+  // 1. Windows version (minimum Win10 2004 = Build 19041 = $4A61)
   if GetWindowsVersion < $0A004A61 then begin
     MsgBox(CustomMessage('ErrOSVersion'), mbError, MB_OK);
     Result := False;
     Exit;
   end;
 
-  // 2. Disk space (at least 6 GB on C:\) — instant, safe to run before UI
+  // 2. Disk space (at least 6 GB on C:\)
   GetSpaceOnDisk('C:\', True, FreeSpace, TotalSpace);
   if FreeSpace < 6144 then begin
     if MsgBox(
@@ -272,170 +436,69 @@ begin
       Exit;
     end;
   end;
-
-  // WSL2 check is deferred to NextButtonClick (welcome page → next)
-  // so the installer window appears immediately without blocking.
 end;
 
 // ────────────────────────────────────────────────
-// WSL2 check: runs when user clicks Next on welcome page
-// UI is already visible at this point — no "black screen" freeze
+// WSL2 gating logic on the welcome page.
+// Note: we do NOT use TOutputProgressWizardPage here — it is designed for
+// the ssInstall phase and does not reliably paint when shown from within a
+// NextButtonClick handler.  Instead, we show a visible cmd window (from
+// RunWSLEnableVisible) so the user sees real live output from wsl/dism.
 // ────────────────────────────────────────────────
 function NextButtonClick(CurPageID: Integer): Boolean;
-var
-  ResultCode: Integer;
 begin
   Result := True;
 
-  if CurPageID = wpWelcome then begin
-    // Show a dedicated progress page while checking WSL2 so the user gets
-    // clear visual feedback instead of a frozen-looking wizard.
-    ProgressPage.SetText(
-      CustomMessage('CheckingWSLTitle'),
-      CustomMessage('CheckingWSLDesc')
-    );
-    // Set to 50 % so the bar looks "in progress" rather than empty/frozen.
-    // TOutputProgressWizardPage has no marquee/indeterminate mode, so a
-    // mid-point value is the best we can do for a short blocking check.
-    ProgressPage.SetProgress(50, 100);
-    ProgressPage.Show;
+  if CurPageID <> wpWelcome then Exit;
 
-    // IsWSL2Ready tries wsl --version (Store/2.x) then wsl --status (in-box).
-    // Either returning exit 0 means WSL2 is functional.
-    if not IsWSL2Ready then begin
-      ProgressPage.Hide;
+  if IsWSL2Ready then Exit;  // all good — let the wizard advance
 
-      // If we already ran the enablement flow this session and user declined
-      // to restart, don't loop back through it — just remind them to restart.
-      if WSL2Triggered then begin
-        MsgBox(CustomMessage('ErrWSL2PendingRestart'), mbInformation, MB_OK);
-        ExitProcess(0);
-      end;
-
-      if MsgBox(CustomMessage('ErrWSL2Prompt'), mbConfirmation, MB_YESNO) = IDYES then begin
-        WSL2Triggered := True;
-
-        // ── Show progress while enabling WSL2 ──
-        ProgressPage.SetText(
-          CustomMessage('EnablingWSLTitle'),
-          CustomMessage('EnablingWSLDesc')
-        );
-        ProgressPage.SetProgress(5, 100);
-        ProgressPage.Show;
-
-        // ── Method 1: wsl --install --no-distribution ──
-        // Available on Windows 10 21H2+ and all Windows 11 builds.
-        // Handles BOTH enabling the features AND installing the kernel in one step.
-        ProgressPage.SetText(
-          CustomMessage('EnablingWSLTitle'),
-          CustomMessage('EnablingWSLStep1')
-        );
-        ProgressPage.SetProgress(10, 100);
-        Exec(SysPath('wsl.exe'), '--install --no-distribution',
-          '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-        SetForegroundWindow(WizardForm.Handle);
-
-        if ResultCode <> 0 then begin
-          // ── Method 2: DISM fallback (Windows 10 pre-21H2 or Store-disabled) ──
-          // DISM enables the WSL feature and VM Platform, but on Windows 10 it
-          // does NOT install the WSL2 Linux kernel.  After reboot the user must
-          // manually install the kernel MSI from https://aka.ms/wsl2kernel
-          // (Windows 11 gets the kernel automatically via Windows Update).
-          UsedDismFallback := True;
-
-          ProgressPage.SetText(
-            CustomMessage('EnablingWSLTitle'),
-            CustomMessage('EnablingWSLStep2')
-          );
-          ProgressPage.SetProgress(25, 100);
-          Exec(SysPath('dism.exe'),
-            '/online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart',
-            '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-          SetForegroundWindow(WizardForm.Handle);
-
-          ProgressPage.SetText(
-            CustomMessage('EnablingWSLTitle'),
-            CustomMessage('EnablingWSLStep3')
-          );
-          ProgressPage.SetProgress(55, 100);
-          Exec(SysPath('dism.exe'),
-            '/online /enable-feature /featurename:VirtualMachinePlatform /all /norestart',
-            '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-          SetForegroundWindow(WizardForm.Handle);
-
-        end;
-
-        // ── Always: update the WSL Store package & kernel ──
-        // `wsl --install --no-distribution` enables the Windows features but
-        // doesn't always deliver the latest WSL Store package / kernel.
-        // `wsl --update` fetches it explicitly, which is what makes
-        // `wsl --version` succeed after the reboot.
-        ProgressPage.SetText(
-          CustomMessage('EnablingWSLTitle'),
-          CustomMessage('EnablingWSLStep4')
-        );
-        ProgressPage.SetProgress(70, 100);
-        Exec(SysPath('wsl.exe'), '--update',
-          '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-        SetForegroundWindow(WizardForm.Handle);
-
-        // ── Always: set WSL2 as the default version ──
-        ProgressPage.SetText(
-          CustomMessage('EnablingWSLTitle'),
-          CustomMessage('EnablingWSLStep5')
-        );
-        ProgressPage.SetProgress(90, 100);
-        Exec(SysPath('wsl.exe'), '--set-default-version 2',
-          '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-        SetForegroundWindow(WizardForm.Handle);
-
-        ProgressPage.SetProgress(100, 100);
-        ProgressPage.Hide;
-
-        // On Windows 10 (Build < 22000) when only DISM was available,
-        // the WSL2 Linux kernel is NOT installed by DISM — the user must
-        // download it manually from https://aka.ms/wsl2kernel after rebooting.
-        // We only show this note when the DISM fallback was actually used:
-        // if wsl --install succeeded (and wsl --update ran), the kernel is
-        // already present and showing this note would mislead the user.
-        // Shown AFTER the progress page is hidden so dialogs don't overlap.
-        if UsedDismFallback and (GetWindowsVersion < $0A0055F0) then
-          MsgBox(CustomMessage('ErrWSL2KernelNote'), mbInformation, MB_OK);
-
-        // Ask user to restart (one confirmation required)
-        ShowRestartPrompt;
-      end else begin
-        // User clicked No — they declined to enable WSL2.
-        // Exit the installer immediately without any further confirmation.
-        ExitProcess(0);
-      end;
-
-      Result := False;
-      Exit;
-    end;
-
-    // WSL2 is ready — hide the check progress page and proceed normally.
-    ProgressPage.Hide;
+  // WSL2 not ready.  If the user already went through the enable flow this
+  // session and declined the restart, don't loop — just remind them.
+  if WSL2Triggered then begin
+    MsgBox(CustomMessage('ErrWSL2PendingRestart'), mbInformation, MB_OK);
+    ExitProcess(0);
   end;
+
+  if MsgBox(CustomMessage('ErrWSL2Prompt'), mbConfirmation, MB_YESNO) <> IDYES then begin
+    // User declined to enable WSL2 — exit immediately, no further prompts.
+    ExitProcess(0);
+  end;
+
+  // ErrWSL2Prompt has already described what the console will do, so jump
+  // straight to it rather than forcing a second OK click.
+  if not RunWSLEnableVisible then begin
+    // Console failed to launch or was closed prematurely — the specific error
+    // was already shown inside RunWSLEnableVisible.  Leave WSL2Triggered=False
+    // so the user can click Next again to retry the full flow.
+    Result := False;
+    Exit;
+  end;
+
+  // Only mark "triggered" after a real, completed attempt — otherwise a
+  // premature close would trap the user in the "restart pending" dead-end.
+  WSL2Triggered := True;
+
+  // Windows 11 starts at Build 22000 ($55F0).  On Win10, if we had to fall
+  // back to DISM (no modern `wsl --install`), the kernel was NOT auto-
+  // installed — point the user at the manual kernel MSI.
+  if UsedDismFallback and (GetWindowsVersion < $0A0055F0) then
+    MsgBox(CustomMessage('ErrWSL2KernelNote'), mbInformation, MB_OK);
+
+  ShowRestartPrompt;
+
+  Result := False;  // stay on welcome page (we're about to restart or exit)
 end;
 
 // ────────────────────────────────────────────────
-// Initialise: create the progress page
-// ────────────────────────────────────────────────
-procedure InitializeWizard();
-begin
-  ProgressPage := CreateOutputProgressPage(
-    CustomMessage('ProgressTitle'),
-    CustomMessage('ProgressDesc')
-  );
-end;
-
-// ────────────────────────────────────────────────
-// Core install logic (with detailed progress feedback)
+// CP2K install phase (ssPostInstall).
+// The slow part (wsl --import, 2-4 min) runs in a visible cmd window so the
+// user has something tangible to watch.  The fast steps (PATH config, temp
+// cleanup) run hidden since they complete in well under a second.
 // ────────────────────────────────────────────────
 procedure CurStepChanged(CurStep: TSetupStep);
 var
-  ResultCode: Integer;
+  ResultCode, ImportRC: Integer;
   AppDir, WslDistroDir, TarFile: String;
 begin
   if CurStep <> ssPostInstall then Exit;
@@ -444,88 +507,45 @@ begin
   WslDistroDir := AppDir + '\wsl_distro';
   TarFile      := AppDir + '\cp2k_distro.tar';
 
-  ProgressPage.Show;
-  try
+  if not DirExists(WslDistroDir) then
+    CreateDir(WslDistroDir);
 
-    // ── Step 1/3: Import runtime environment (most time-consuming) ──
-    ProgressPage.SetText(
-      CustomMessage('Step1Title'),
-      CustomMessage('Step1Desc')
-    );
-    ProgressPage.SetProgress(0, 100);
-
-    if not DirExists(WslDistroDir) then
-      CreateDir(WslDistroDir);
-
-    // Defensive: if a previous CP2K distro already exists (e.g. leftover
-    // from a failed prior install), remove it first.  Ignore failures —
-    // the call also "fails" harmlessly when no such distro is registered.
-    Exec(SysPath('wsl.exe'), '--unregister CP2K',
-      '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-
-    // Nudge the bar to 5 % so it is visibly non-zero while the import runs
-    // (wsl --import can take 2-4 minutes and we have no sub-step progress).
-    ProgressPage.SetProgress(5, 100);
-
-    // Explicit --version 2 ensures the distro is imported as WSL2 even if
-    // the default version isn't set to 2 (wsl --set-default-version may have
-    // failed silently on a freshly-enabled system that hasn't rebooted yet).
-    if not Exec(SysPath('wsl.exe'),
-      '--import CP2K "' + WslDistroDir + '" "' + TarFile + '" --version 2',
-      '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
-      SetForegroundWindow(WizardForm.Handle);
-      ResultCode := -1;
-    end;
-    SetForegroundWindow(WizardForm.Handle);
-    if ResultCode <> 0 then begin
-      // Hide the progress page before showing the error so dialogs don't overlap.
-      ProgressPage.Hide;
-      MsgBox(
-        FmtMessage(CustomMessage('ErrWSL2EnvFail'), [IntToStr(ResultCode)]),
-        mbError, MB_OK);
-      // RaiseException aborts the install and triggers Inno Setup's rollback,
-      // so the user doesn't see a false "Installation Complete!" message.
-      RaiseException('WSL import failed with exit code ' + IntToStr(ResultCode));
-    end;
-    ProgressPage.SetProgress(68, 100);
-
-    // ── Step 2/3: Configure environment variables ──
-    ProgressPage.SetText(
-      CustomMessage('Step2Title'),
-      CustomMessage('Step2Desc')
-    );
-    ProgressPage.SetProgress(70, 100);
-
-    Exec(SysPath('WindowsPowerShell\v1.0\powershell.exe'),
-      '-NoProfile -ExecutionPolicy Bypass -Command ' +
-      '"$p=[Environment]::GetEnvironmentVariable(''Path'',''Machine'');' +
-      'if($p -notlike ''*CP2K*''){' +
-      '[Environment]::SetEnvironmentVariable(''Path'',$p+'';' + AppDir + ''',''Machine'')}"',
-      '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-
-    if ResultCode <> 0 then
-      MsgBox(CustomMessage('WarnEnvVar'), mbInformation, MB_OK);
-    ProgressPage.SetProgress(85, 100);
-
-    // ── Step 3/3: Clean up temporary files ──
-    ProgressPage.SetText(
-      CustomMessage('Step3Title'),
-      CustomMessage('Step3Desc')
-    );
-    ProgressPage.SetProgress(92, 100);
-
-    if FileExists(TarFile) then
-      DeleteFile(TarFile);
-
-    ProgressPage.SetProgress(100, 100);
-    ProgressPage.SetText(
-      CustomMessage('DoneTitle'),
-      CustomMessage('DoneDesc')
-    );
-
-  finally
-    ProgressPage.Hide;
+  // Guard against a missing tar (e.g. on-the-fly AV quarantine between
+  // extraction and this step) before handing it to wsl --import, which
+  // would otherwise report a cryptic "file not found" code.
+  if not FileExists(TarFile) then begin
+    MsgBox(FmtMessage(CustomMessage('ErrWSL2EnvFail'), ['tar missing']),
+      mbError, MB_OK);
+    RaiseException('CP2K distro tar not found: ' + TarFile);
   end;
+
+  // ── Step 1/3: Import runtime environment (visible cmd window) ──
+  // The cmd window's own banner explains what's happening; no pre-MsgBox.
+  RunWSLImportVisible(WslDistroDir, TarFile, ImportRC);
+
+  if ImportRC <> 0 then begin
+    MsgBox(
+      FmtMessage(CustomMessage('ErrWSL2EnvFail'), [IntToStr(ImportRC)]),
+      mbError, MB_OK);
+    // RaiseException aborts the install and triggers Inno Setup's rollback
+    // so the user doesn't see a false "Installation Complete!" message.
+    RaiseException('WSL import failed with exit code ' + IntToStr(ImportRC));
+  end;
+
+  // ── Step 2/3: Configure environment variables (hidden, sub-second) ──
+  Exec(SysPath('WindowsPowerShell\v1.0\powershell.exe'),
+    '-NoProfile -ExecutionPolicy Bypass -Command ' +
+    '"$p=[Environment]::GetEnvironmentVariable(''Path'',''Machine'');' +
+    'if($p -notlike ''*CP2K*''){' +
+    '[Environment]::SetEnvironmentVariable(''Path'',$p+'';' + AppDir + ''',''Machine'')}"',
+    '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+
+  if ResultCode <> 0 then
+    MsgBox(CustomMessage('WarnEnvVar'), mbInformation, MB_OK);
+
+  // ── Step 3/3: Clean up temporary files ──
+  if FileExists(TarFile) then
+    DeleteFile(TarFile);
 
   // Refresh Windows icon cache so the desktop shortcut icon renders crisply
   RefreshShellIcons;
