@@ -6,6 +6,20 @@ REM  Usage: run_cp2k.bat input.inp
 REM ============================================
 
 setlocal
+set "DISTRO_EXISTS="
+
+for /f "usebackq delims=" %%i in (`wsl -l -q 2^>nul`) do (
+    if /I "%%i"=="CP2K" set "DISTRO_EXISTS=1"
+)
+
+if not defined DISTRO_EXISTS (
+    echo.
+    echo  Error: CP2K WSL distribution was not found. / 未找到 CP2K 的 WSL 发行版。
+    echo  Please run the installer again. / 请重新运行安装程序。
+    echo.
+    pause
+    exit /b 1
+)
 
 if "%~1"=="" (
     echo.

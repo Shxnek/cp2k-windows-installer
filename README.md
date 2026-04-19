@@ -234,12 +234,12 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
 
 ## 安装过程说明
 
-安装程序会全程引导，无需手动操作。内置的检查和提示包括：
+安装程序会尽量全程引导。若 WSL 组件更新失败，安装器会明确提示你先手动修复，再继续安装。内置的检查和提示包括：
 
 - **安装前自动检查**
   - Windows 版本是否满足要求（需 Win10 2004 或更高）
   - C 盘是否有足够空间（至少 6GB）
-  - WSL2 是否已启用（未启用会自动帮你开启，并提示重启）
+  - WSL2 是否已启用（未启用会自动帮你开启；若全部成功会提示重启继续）
 
 - **安装中实时进度**
   - 步骤 1/3：导入 CP2K 运行环境（约 2-4 分钟）
@@ -248,7 +248,7 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
 
 - **安装失败时**
   - 尽量区分是 Windows 功能启用失败、WSL2 尚未就绪，还是导入运行环境失败
-  - Windows 10 如缺少 WSL2 内核更新包，也会提示额外处理步骤
+  - 如果 `wsl.exe --update` 失败，会提示先手动修复 WSL 更新，再重新运行安装程序
 
 ---
 

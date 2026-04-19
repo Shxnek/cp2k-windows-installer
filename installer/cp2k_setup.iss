@@ -70,22 +70,24 @@ chinesesimplified.RestartCancelledMsg=已跳过重启。%n%nWSL2 尚未激活，
 ; ----- Error / warning messages  (%1 = runtime parameter) -----
 english.ErrOSVersion=Your operating system is not supported.%n%nWindows 10 2004 (Build 19041) or later is required.%nPlease update Windows and run the installer again.
 english.ErrDiskSpace=Insufficient disk space.%n%nAt least 6 GB of free space on drive C is required.%nCurrent free space: %1 GB%n%nPlease free up space and retry. Continue anyway?
-english.ErrWSL2Prompt=WSL2 not detected.%n%nCP2K requires the Windows Subsystem for Linux (WSL2).%nClick Yes to enable WSL2 automatically.%n%nA console window will open and run the following commands:%n  dism  - Enable Windows Subsystem for Linux%n  dism  - Enable Virtual Machine Platform%n  wsl   - Set default version to 2%nThis takes about 1–2 minutes. Press any key to close it when done.%n%nYour computer will restart afterwards, and the installer will resume on its own.
+english.ErrWSL2Prompt=WSL2 not detected.%n%nCP2K requires the Windows Subsystem for Linux (WSL2).%nClick Yes to enable WSL2 automatically.%n%nA console window will open and run the following commands:%n  dism  - Enable Windows Subsystem for Linux%n  dism  - Enable Virtual Machine Platform%n  wsl   - Set default version to 2%n  wsl   - Update WSL components%n%nThis takes about 1–2 minutes. Press any key to close it when done.%n%nIf all steps succeed, your computer will restart and the installer will resume on its own.%nIf the WSL update step fails, the installer will stop and ask you to fix it manually first.
 english.ErrWSL2PendingRestart=WSL2 has already been enabled in this session.%n%nPlease restart your computer first, then run this installer again.
 english.ErrWSL2KernelNote=Additional step required for Windows 10:%n%nAfter restarting, download and install the WSL2 Linux kernel update package:%n    https://aka.ms/wsl2kernel%n%nThen run this installer again.
 english.ErrWSL2EnableFeatureFail=Failed to enable a required Windows feature (error code: %1).%n%nPlease make sure this PC allows Windows optional features to be changed, then run the installer again.
 english.ErrWSL2SetDefaultFail=WSL was enabled, but setting the default version to WSL2 failed (error code: %1).%n%nSuggested fixes:%n  1. Restart your computer and run the installer again%n  2. On Windows 10, install the WSL2 Linux kernel update package%n  3. Ensure virtualisation (VT-x / AMD-V) is enabled in BIOS
+english.ErrWSL2UpdateFail=WSL was enabled, but updating the WSL components failed (error code: %1).%n%nPlease run `wsl.exe --update`, or install the required WSL update manually, then run this installer again.%n%nThis step is required to avoid leaving WSL in a half-configured state.
 english.ErrWSL2NotReadyAfterRestart=WSL2 is still not ready after the restart.%n%nPlease confirm that Windows finished applying the optional-feature changes, then run the installer again.%n%nOn Windows 10, you may also need the WSL2 Linux kernel update package.
 english.ErrWSL2EnvFail=Failed to import runtime environment (error code: %1).%n%nSuggested fixes:%n  1. Restart your computer and run the installer again%n  2. Enable WSL manually via "Turn Windows features on or off"%n  3. Ensure virtualisation (VT-x / AMD-V) is enabled in BIOS%n%nFor further help visit https://www.cp2k.org
 english.WarnEnvVar=Environment variable configuration failed — this will not affect normal use.%nYou can still launch CP2K by double-clicking the desktop shortcut.
 
 chinesesimplified.ErrOSVersion=系统版本不符合要求。%n%n需要 Windows 10 2004（Build 19041）或更高版本。%n当前系统版本过低，请先更新 Windows 再安装。
 chinesesimplified.ErrDiskSpace=C 盘可用空间不足。%n%n安装 CP2K 至少需要 6GB 可用空间。%n当前 C 盘剩余空间：%1 GB%n%n建议清理磁盘后重试。是否仍要继续安装？
-chinesesimplified.ErrWSL2Prompt=未检测到 WSL2。%n%nCP2K 需要 Windows 子系统（WSL2）才能运行。%n点击"是"将自动启用 WSL2。%n%n即将弹出命令行窗口，依次执行以下命令：%n  dism  - 启用 Windows Subsystem for Linux 功能%n  dism  - 启用 Virtual Machine Platform 功能%n  wsl   - 设置默认版本为 2%n整个过程约 1-2 分钟，完成后按任意键关闭窗口。%n%n随后电脑会自动重启，重启后安装程序会自动继续。
+chinesesimplified.ErrWSL2Prompt=未检测到 WSL2。%n%nCP2K 需要 Windows 子系统（WSL2）才能运行。%n点击"是"将自动启用 WSL2。%n%n即将弹出命令行窗口，依次执行以下命令：%n  dism  - 启用 Windows Subsystem for Linux 功能%n  dism  - 启用 Virtual Machine Platform 功能%n  wsl   - 设置默认版本为 2%n  wsl   - 更新 WSL 组件%n%n整个过程约 1-2 分钟，完成后按任意键关闭窗口。%n%n如果上述步骤都成功，电脑会自动重启，重启后安装程序会自动继续。%n如果 WSL 更新步骤失败，安装程序会先停止，并提示你手动修复后再继续。
 chinesesimplified.ErrWSL2PendingRestart=本次会话中已启用过 WSL2。%n%n请先重启电脑，重启完成后再次运行本安装程序。
 chinesesimplified.ErrWSL2KernelNote=Windows 10 用户需额外操作：%n%n重启完成后，请下载并安装 WSL2 Linux 内核更新包：%n    https://aka.ms/wsl2kernel%n%n安装完成后再次运行本安装程序。
 chinesesimplified.ErrWSL2EnableFeatureFail=启用必需的 Windows 功能失败（错误码：%1）。%n%n请确认这台电脑允许修改 Windows 可选功能，然后重新运行安装程序。
 chinesesimplified.ErrWSL2SetDefaultFail=WSL 功能已启用，但将默认版本设为 WSL2 失败（错误码：%1）。%n%n请尝试以下方法：%n  1. 重启电脑后重新运行安装程序%n  2. Windows 10 请安装 WSL2 Linux 内核更新包%n  3. 确认 BIOS 中已开启虚拟化（VT-x / AMD-V）
+chinesesimplified.ErrWSL2UpdateFail=WSL 功能已启用，但更新 WSL 组件失败（错误码：%1）。%n%n请先运行 `wsl.exe --update`，或手动安装所需的 WSL 更新，然后再重新运行本安装程序。%n%n这一步是必需的，否则系统可能停留在未完成配置状态。
 chinesesimplified.ErrWSL2NotReadyAfterRestart=电脑重启后，WSL2 仍未就绪。%n%n请确认 Windows 已完成可选功能变更，再重新运行安装程序。%n%n如果是 Windows 10，可能还需要安装 WSL2 Linux 内核更新包。
 chinesesimplified.ErrWSL2EnvFail=运行环境导入失败（错误码：%1）。%n%n请尝试以下解决方法：%n  1. 重启电脑后重新运行安装程序%n  2. 在"开启或关闭 Windows 功能"中手动启用 WSL%n  3. 确认 BIOS 中已开启虚拟化（Virtualization）%n%n如问题持续，请访问 https://www.cp2k.org 获取帮助。
 chinesesimplified.WarnEnvVar=环境变量配置失败，不影响正常使用。%n你仍可通过双击桌面快捷方式来启动 CP2K。
@@ -214,7 +216,7 @@ var
   Lines: TArrayOfString;
   DonePath: String;
   FeatureWSLRCPath, FeatureVMPRCPath, SetDefaultRCPath, UpdateRCPath: String;
-  FeatureWSLRC, FeatureVMPRC, SetDefaultRC: Integer;
+  FeatureWSLRC, FeatureVMPRC, SetDefaultRC, UpdateRC: Integer;
   RC: Integer;
 begin
   Result := False;
@@ -262,11 +264,11 @@ begin
   Lines[28] := '> "' + SetDefaultRCPath + '" echo %ERRORLEVEL%';
   Lines[29] := 'echo.';
   Lines[30] := 'echo --------------------------------------------------';
-  Lines[31] := 'echo [Step 4/4]  Optional: Update WSL kernel from Windows Store';
+  Lines[31] := 'echo [Step 4/4]  Update WSL components';
   Lines[32] := 'echo --------------------------------------------------';
   Lines[33] := 'wsl.exe --update';
   Lines[34] := '> "' + UpdateRCPath + '" echo %ERRORLEVEL%';
-  Lines[35] := 'if not "%ERRORLEVEL%"=="0" echo   (WSL kernel update skipped - non-critical)';
+  Lines[35] := 'if not "%ERRORLEVEL%"=="0" echo   WSL update failed and must be fixed before continuing.';
   Lines[36] := 'echo.';
   // Done-sentinel: if missing after Exec returns, the user closed the window early.
   Lines[37] := '> "' + DonePath + '" echo done';
@@ -293,6 +295,7 @@ begin
   FeatureWSLRC := ReadExitCodeFile(FeatureWSLRCPath, -1);
   FeatureVMPRC := ReadExitCodeFile(FeatureVMPRCPath, -1);
   SetDefaultRC := ReadExitCodeFile(SetDefaultRCPath, -1);
+  UpdateRC := ReadExitCodeFile(UpdateRCPath, -1);
 
   if FeatureWSLRC <> 0 then begin
     MsgBox(FmtMessage(CustomMessage('ErrWSL2EnableFeatureFail'), [IntToStr(FeatureWSLRC)]),
@@ -308,6 +311,12 @@ begin
 
   if SetDefaultRC <> 0 then begin
     MsgBox(FmtMessage(CustomMessage('ErrWSL2SetDefaultFail'), [IntToStr(SetDefaultRC)]),
+      mbError, MB_OK);
+    Exit;
+  end;
+
+  if UpdateRC <> 0 then begin
+    MsgBox(FmtMessage(CustomMessage('ErrWSL2UpdateFail'), [IntToStr(UpdateRC)]),
       mbError, MB_OK);
     Exit;
   end;
@@ -334,7 +343,7 @@ begin
   RCPath := ExpandConstant('{tmp}\cp2k_import_rc.txt');
   if FileExists(RCPath) then DeleteFile(RCPath);
 
-  SetArrayLength(Lines, 30);
+  SetArrayLength(Lines, 38);
   Lines[ 0] := '@echo off';
   Lines[ 1] := 'chcp 65001 >nul 2>&1';
   Lines[ 2] := 'title CP2K Installer - Importing Runtime';
@@ -349,22 +358,30 @@ begin
   Lines[11] := 'echo   DO NOT close this window manually.';
   Lines[12] := 'echo ==================================================';
   Lines[13] := 'echo.';
-  Lines[14] := 'echo [1/2] Removing any previous CP2K distro (if present)...';
-  Lines[15] := 'wsl.exe --unregister CP2K 2>nul';
-  Lines[16] := 'echo.';
-  Lines[17] := 'echo [2/2] Importing CP2K distro as WSL2...';
-  Lines[18] := 'echo    target:  "' + WslDistroDir + '"';
-  Lines[19] := 'echo    source:  "' + TarFile + '"';
-  Lines[20] := 'wsl.exe --import CP2K "' + WslDistroDir + '" "' + TarFile + '" --version 2';
-  Lines[21] := 'set IMPORT_RC=%ERRORLEVEL%';
-  Lines[22] := '> "' + RCPath + '" echo %IMPORT_RC%';
+  Lines[14] := 'echo [1/3] Removing any previous CP2K distro (if present)...';
+  Lines[15] := 'wsl.exe --terminate CP2K 2>nul';
+  Lines[16] := 'wsl.exe --unregister CP2K 2>nul';
+  Lines[17] := 'echo.';
+  Lines[18] := 'echo [2/3] Cleaning previous runtime directory (if present)...';
+  Lines[19] := 'if exist "' + WslDistroDir + '\*" rmdir /s /q "' + WslDistroDir + '"';
+  Lines[20] := 'if exist "' + WslDistroDir + '" rmdir /s /q "' + WslDistroDir + '"';
+  Lines[21] := 'mkdir "' + WslDistroDir + '"';
+  Lines[22] := 'if exist "' + WslDistroDir + '" echo   Runtime directory ready.';
   Lines[23] := 'echo.';
-  Lines[24] := 'echo ==================================================';
-  Lines[25] := 'echo   Import finished with exit code %IMPORT_RC%';
-  Lines[26] := 'echo   Closing in 5 seconds...';
-  Lines[27] := 'echo ==================================================';
-  Lines[28] := 'timeout /t 5 /nobreak >nul';
-  Lines[29] := 'exit /b %IMPORT_RC%';
+  Lines[24] := 'echo [3/3] Importing CP2K distro as WSL2...';
+  Lines[25] := 'echo    target:  "' + WslDistroDir + '"';
+  Lines[26] := 'echo    source:  "' + TarFile + '"';
+  Lines[27] := 'wsl.exe --import CP2K "' + WslDistroDir + '" "' + TarFile + '" --version 2';
+  Lines[28] := 'set IMPORT_RC=%ERRORLEVEL%';
+  Lines[29] := '> "' + RCPath + '" echo %IMPORT_RC%';
+  Lines[30] := 'echo.';
+  Lines[31] := 'echo ==================================================';
+  Lines[32] := 'echo   Import finished with exit code %IMPORT_RC%';
+  Lines[33] := 'echo   Closing in 5 seconds...';
+  Lines[34] := 'echo ==================================================';
+  Lines[35] := 'timeout /t 5 /nobreak >nul';
+  Lines[36] := 'exit /b %IMPORT_RC%';
+  Lines[37] := '';
 
   Launched := RunVisibleBatch(Lines, 'cp2k_import_wsl.bat', ImportRC);
 
@@ -395,17 +412,34 @@ end;
 procedure ShowRestartPrompt;
 var
   RC: Integer;
+  ResumeDir, ResumeExe, ResumeTarget: String;
 begin
   if MsgBox(CustomMessage('RestartPrompt'), mbConfirmation, MB_YESNO) = IDYES then begin
+    ResumeDir := ExpandConstant('{commonappdata}\CP2K');
+    ResumeExe := ResumeDir + '\cp2k_resume_setup.exe';
+    ResumeTarget := ExpandConstant('{srcexe}');
+
+    if not DirExists(ResumeDir) then
+      CreateDir(ResumeDir);
+
+    if FileExists(ResumeExe) then
+      DeleteFile(ResumeExe);
+
+    // Copy the installer to a stable location so RunOnce does not depend on
+    // the original download/extract folder still existing after the reboot.
+    if Exec(SysPath('cmd.exe'),
+      '/C copy /Y "' + ExpandConstant('{srcexe}') + '" "' + ResumeExe + '" >nul',
+      '', SW_HIDE, ewWaitUntilTerminated, RC) and (RC = 0) then
+      ResumeTarget := ResumeExe;
+
     // RunOnce under HKLM runs once at next login as the logging-in user.
     // Values starting with '!' make RunOnce keep the entry if the program
     // returns non-zero — but we WANT one-shot behavior, so no leading '!'.
-    // {srcexe} is the path of the currently-running setup.exe.  Quoting it
-    // handles install paths that contain spaces.
+    // Quoting handles install paths that contain spaces.
     RegWriteStringValue(HKEY_LOCAL_MACHINE,
       'Software\Microsoft\Windows\CurrentVersion\RunOnce',
       'CP2KInstallerResume',
-      '"' + ExpandConstant('{srcexe}') + '"');
+      '"' + ResumeTarget + '"');
 
     Exec(SysPath('shutdown.exe'), '/r /t 0 /c "WSL2 enabled — restarting for CP2K setup."',
       '', SW_HIDE, ewWaitUntilTerminated, RC);
@@ -504,12 +538,6 @@ begin
   // Only mark "triggered" after a real, completed attempt — otherwise a
   // premature close would trap the user in the "restart pending" dead-end.
   WSL2Triggered := True;
-
-  // Windows 11 starts at Build 22000 ($55F0).  On Windows 10 we always use
-  // DISM, which does NOT install the WSL2 kernel — point the user at the
-  // manual kernel MSI if wsl --update didn't handle it automatically.
-  if GetWindowsVersion < $0A0055F0 then
-    MsgBox(CustomMessage('ErrWSL2KernelNote'), mbInformation, MB_OK);
 
   ShowRestartPrompt;
 
