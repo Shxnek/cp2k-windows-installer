@@ -146,10 +146,11 @@ Name: "{userdesktop}\{cm:DesktopLink}"; Filename: "{app}\cp2k_shell.bat"; Workin
 
 
 [UninstallRun]
-; 注销 WSL 发行版
-Filename: "wsl.exe"; Parameters: "--unregister CP2K"; Flags: runhidden
+; 注销 WSL 发行版（使用 {sysnative} 避开 WOW64 重定向，否则 32 位卸载程序找不到 wsl.exe）
+; waituntilterminated：等 WSL 彻底释放 ext4.vhdx 文件锁再继续删文件，避免孤儿文件
+Filename: "{sysnative}\wsl.exe"; Parameters: "--unregister CP2K"; Flags: runhidden waituntilterminated
 ; 从系统 PATH 中移除本次安装目录（精确匹配 {app}，不会误删其他 CP2K 相关路径）
-Filename: "powershell.exe"; \
+Filename: "{sysnative}\WindowsPowerShell\v1.0\powershell.exe"; \
   Parameters: "-NoProfile -ExecutionPolicy Bypass -Command ""$t='{app}'; $p=[Environment]::GetEnvironmentVariable('Path','Machine'); $p=($p -split ';' | Where-Object {{ $_ -and ($_.TrimEnd('\') -ne $t.TrimEnd('\')) }}) -join ';'; [Environment]::SetEnvironmentVariable('Path',$p,'Machine')"""; \
   Flags: runhidden waituntilterminated
 
@@ -163,6 +164,19 @@ procedure ExitProcess(uExitCode: Integer);
 procedure SHChangeNotify(wEventId: Integer; uFlags: Cardinal; dwItem1, dwItem2: Longint);
   external 'SHChangeNotify@shell32.dll stdcall';
 
+// ────────────────────────────────────────────────
+// Return the native 64-bit System32 path for a given executable, bypassing
+// WOW64 file-system redirection.  This installer is a 32-bit process, so a
+// bare 'wsl.exe' / 'dism.exe' / etc. would be looked up in SysWOW64 — where
+// wsl.exe does not exist at all, making Exec silently fail.  Using the
+// {sysnative} pseudo-path (C:\Windows\Sysnative on 32-bit processes)
+// forces Windows to resolve to the real 64-bit System32.
+// ────────────────────────────────────────────────
+function SysPath(const FileName: String): String;
+begin
+  Result := ExpandConstant('{sysnative}') + '\' + FileName;
+end;
+
 procedure RefreshShellIcons;
 var
   ResultCode: Integer;
@@ -170,7 +184,7 @@ begin
   // Notify shell that file associations changed → redraws all icons
   SHChangeNotify($08000000, $0000, 0, 0);
   // Also run ie4uinit to flush the on-disk icon cache (Windows 10/11)
-  Exec('ie4uinit.exe', '-show', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  Exec(SysPath('ie4uinit.exe'), '-show', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 end;
 
 var
@@ -186,7 +200,7 @@ var
   RC: Integer;
 begin
   if MsgBox(CustomMessage('RestartPrompt'), mbConfirmation, MB_YESNO) = IDYES then
-    Exec('shutdown.exe', '/r /t 0 /c "WSL2 enabled — restarting for CP2K setup."',
+    Exec(SysPath('shutdown.exe'), '/r /t 0 /c "WSL2 enabled — restarting for CP2K setup."',
       '', SW_HIDE, ewWaitUntilTerminated, RC)
   else
     MsgBox(CustomMessage('RestartCancelledMsg'), mbInformation, MB_OK);
@@ -202,11 +216,11 @@ var
   RC: Integer;
 begin
   Result := False;
-  if Exec('wsl.exe', '--version', '', SW_HIDE, ewWaitUntilTerminated, RC)
+  if Exec(SysPath('wsl.exe'), '--version', '', SW_HIDE, ewWaitUntilTerminated, RC)
      and (RC = 0) then begin
     Result := True; Exit;
   end;
-  if Exec('wsl.exe', '--status', '', SW_HIDE, ewWaitUntilTerminated, RC)
+  if Exec(SysPath('wsl.exe'), '--status', '', SW_HIDE, ewWaitUntilTerminated, RC)
      and (RC = 0) then
     Result := True;
 end;
@@ -267,8 +281,7 @@ begin
       // to restart, don't loop back through it — just remind them to restart.
       if WSL2Triggered then begin
         MsgBox(CustomMessage('ErrWSL2PendingRestart'), mbInformation, MB_OK);
-        Result := False;
-        Exit;
+        ExitProcess(0);
       end;
 
       if MsgBox(CustomMessage('ErrWSL2Prompt'), mbConfirmation, MB_YESNO) = IDYES then begin
@@ -290,7 +303,7 @@ begin
           CustomMessage('EnablingWSLStep1')
         );
         ProgressPage.SetProgress(10, 100);
-        Exec('wsl.exe', '--install --no-distribution',
+        Exec(SysPath('wsl.exe'), '--install --no-distribution',
           '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 
         if ResultCode <> 0 then begin
@@ -304,7 +317,7 @@ begin
             CustomMessage('EnablingWSLStep2')
           );
           ProgressPage.SetProgress(25, 100);
-          Exec('dism.exe',
+          Exec(SysPath('dism.exe'),
             '/online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart',
             '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 
@@ -313,7 +326,7 @@ begin
             CustomMessage('EnablingWSLStep3')
           );
           ProgressPage.SetProgress(55, 100);
-          Exec('dism.exe',
+          Exec(SysPath('dism.exe'),
             '/online /enable-feature /featurename:VirtualMachinePlatform /all /norestart',
             '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 
@@ -325,7 +338,7 @@ begin
           CustomMessage('EnablingWSLStep4')
         );
         ProgressPage.SetProgress(90, 100);
-        Exec('wsl.exe', '--set-default-version 2',
+        Exec(SysPath('wsl.exe'), '--set-default-version 2',
           '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 
         ProgressPage.SetProgress(100, 100);
@@ -395,11 +408,14 @@ begin
     // Defensive: if a previous CP2K distro already exists (e.g. leftover
     // from a failed prior install), remove it first.  Ignore failures —
     // the call also "fails" harmlessly when no such distro is registered.
-    Exec('wsl.exe', '--unregister CP2K',
+    Exec(SysPath('wsl.exe'), '--unregister CP2K',
       '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 
-    if not Exec('wsl.exe',
-      '--import CP2K "' + WslDistroDir + '" "' + TarFile + '"',
+    // Explicit --version 2 ensures the distro is imported as WSL2 even if
+    // the default version isn't set to 2 (wsl --set-default-version may have
+    // failed silently on a freshly-enabled system that hasn't rebooted yet).
+    if not Exec(SysPath('wsl.exe'),
+      '--import CP2K "' + WslDistroDir + '" "' + TarFile + '" --version 2',
       '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
       or (ResultCode <> 0) then begin
       // Hide the progress page before showing the error so dialogs don't overlap.
@@ -420,7 +436,7 @@ begin
     );
     ProgressPage.SetProgress(70, 100);
 
-    Exec('powershell.exe',
+    Exec(SysPath('WindowsPowerShell\v1.0\powershell.exe'),
       '-NoProfile -ExecutionPolicy Bypass -Command ' +
       '"$p=[Environment]::GetEnvironmentVariable(''Path'',''Machine'');' +
       'if($p -notlike ''*CP2K*''){' +
