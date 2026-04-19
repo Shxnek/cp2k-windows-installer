@@ -80,8 +80,10 @@ chinesesimplified.DoneTitle=安装完成！
 chinesesimplified.DoneDesc=CP2K 已成功安装到你的电脑。
 
 ; ----- WSL check status (shown while checking, after welcome page) -----
-english.CheckingWSL=Checking system environment, please wait…
-chinesesimplified.CheckingWSL=正在检测系统环境，请稍候…
+english.CheckingWSLTitle=Checking System Environment
+english.CheckingWSLDesc=Verifying that WSL2 is available. This takes a few seconds — please wait…
+chinesesimplified.CheckingWSLTitle=正在检测系统环境
+chinesesimplified.CheckingWSLDesc=正在检测 WSL2 是否已启用，请稍候几秒钟…
 
 ; ----- WSL2 enabling progress (shown when user clicks Yes to enable WSL2) -----
 english.EnablingWSLTitle=Enabling WSL2
@@ -159,6 +161,11 @@ Filename: "{sysnative}\WindowsPowerShell\v1.0\powershell.exe"; \
 // Immediately exit the installer process — used when user declines WSL2 enablement
 procedure ExitProcess(uExitCode: Integer);
   external 'ExitProcess@kernel32.dll stdcall';
+
+// Bring our installer window back to the foreground after a long-running
+// background command (e.g. wsl --install) may have pushed it behind.
+function SetForegroundWindow(hWnd: HWND): BOOL;
+  external 'SetForegroundWindow@user32.dll stdcall';
 
 // Refresh Windows icon/shell cache so shortcuts show the correct icon immediately
 procedure SHChangeNotify(wEventId: Integer; uFlags: Cardinal; dwItem1, dwItem2: Longint);
@@ -268,14 +275,19 @@ begin
   Result := True;
 
   if CurPageID = wpWelcome then begin
-    // Show a status hint so the user knows something is happening
-    WizardForm.StatusLabel.Caption := CustomMessage('CheckingWSL');
-    WizardForm.Update;
+    // Show a dedicated progress page while checking WSL2 so the user gets
+    // clear visual feedback instead of a frozen-looking wizard.
+    ProgressPage.SetText(
+      CustomMessage('CheckingWSLTitle'),
+      CustomMessage('CheckingWSLDesc')
+    );
+    ProgressPage.SetProgress(0, 100);
+    ProgressPage.Show;
 
     // IsWSL2Ready tries wsl --version (Store/2.x) then wsl --status (in-box).
     // Either returning exit 0 means WSL2 is functional.
     if not IsWSL2Ready then begin
-      WizardForm.StatusLabel.Caption := '';
+      ProgressPage.Hide;
 
       // If we already ran the enablement flow this session and user declined
       // to restart, don't loop back through it — just remind them to restart.
@@ -305,6 +317,7 @@ begin
         ProgressPage.SetProgress(10, 100);
         Exec(SysPath('wsl.exe'), '--install --no-distribution',
           '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+        SetForegroundWindow(WizardForm.Handle);
 
         if ResultCode <> 0 then begin
           // ── Method 2: DISM fallback (Windows 10 pre-21H2 or Store-disabled) ──
@@ -320,6 +333,7 @@ begin
           Exec(SysPath('dism.exe'),
             '/online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart',
             '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+          SetForegroundWindow(WizardForm.Handle);
 
           ProgressPage.SetText(
             CustomMessage('EnablingWSLTitle'),
@@ -329,6 +343,7 @@ begin
           Exec(SysPath('dism.exe'),
             '/online /enable-feature /featurename:VirtualMachinePlatform /all /norestart',
             '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+          SetForegroundWindow(WizardForm.Handle);
 
         end;
 
@@ -340,6 +355,7 @@ begin
         ProgressPage.SetProgress(90, 100);
         Exec(SysPath('wsl.exe'), '--set-default-version 2',
           '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+        SetForegroundWindow(WizardForm.Handle);
 
         ProgressPage.SetProgress(100, 100);
         ProgressPage.Hide;
@@ -363,7 +379,8 @@ begin
       Exit;
     end;
 
-    WizardForm.StatusLabel.Caption := '';
+    // WSL2 is ready — hide the check progress page and proceed normally.
+    ProgressPage.Hide;
   end;
 end;
 
@@ -416,8 +433,12 @@ begin
     // failed silently on a freshly-enabled system that hasn't rebooted yet).
     if not Exec(SysPath('wsl.exe'),
       '--import CP2K "' + WslDistroDir + '" "' + TarFile + '" --version 2',
-      '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
-      or (ResultCode <> 0) then begin
+      '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
+      SetForegroundWindow(WizardForm.Handle);
+      ResultCode := -1;
+    end;
+    SetForegroundWindow(WizardForm.Handle);
+    if ResultCode <> 0 then begin
       // Hide the progress page before showing the error so dialogs don't overlap.
       ProgressPage.Hide;
       MsgBox(
