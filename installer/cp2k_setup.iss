@@ -90,22 +90,24 @@ english.EnablingWSLTitle=Enabling WSL2
 english.EnablingWSLDesc=Please wait. This may take 1–2 minutes — do not close the window.
 english.EnablingWSLStep1=Step 1 / 3: Installing WSL2 and Linux kernel via Windows…
 english.EnablingWSLStep2=Step 1a / 3: Enabling Windows Subsystem for Linux feature…
-english.EnablingWSLStep3=Step 2 / 3: Enabling Virtual Machine Platform feature…
-english.EnablingWSLStep4=Step 3 / 3: Setting WSL2 as default version…
+english.EnablingWSLStep3=Step 1b / 3: Enabling Virtual Machine Platform feature…
+english.EnablingWSLStep4=Step 2 / 3: Installing WSL2 package update…
+english.EnablingWSLStep5=Step 3 / 3: Setting WSL2 as default version…
 
 chinesesimplified.EnablingWSLTitle=正在启用 WSL2
 chinesesimplified.EnablingWSLDesc=请耐心等待，可能需要 1-2 分钟，请勿关闭窗口。
 chinesesimplified.EnablingWSLStep1=步骤 1 / 3：正在通过 Windows 安装 WSL2 和 Linux 内核…
 chinesesimplified.EnablingWSLStep2=步骤 1a / 3：正在启用 Windows 子系统（Linux）功能…
-chinesesimplified.EnablingWSLStep3=步骤 2 / 3：正在启用虚拟机平台功能…
-chinesesimplified.EnablingWSLStep4=步骤 3 / 3：正在将 WSL2 设为默认版本…
+chinesesimplified.EnablingWSLStep3=步骤 1b / 3：正在启用虚拟机平台功能…
+chinesesimplified.EnablingWSLStep4=步骤 2 / 3：正在安装 WSL2 包更新…
+chinesesimplified.EnablingWSLStep5=步骤 3 / 3：正在将 WSL2 设为默认版本…
 
 ; ----- Restart prompt (shown after WSL2 enabling) -----
-english.RestartPrompt=WSL2 has been enabled successfully.%n%nA restart is required to complete the setup.%n%nWould you like to restart now?
-english.RestartCancelledMsg=Restart skipped.%n%nPlease restart your computer manually to complete WSL2 setup,%nthen run this installer again.
+english.RestartPrompt=WSL2 setup is complete — a restart is required to activate it.%n%nWSL2 will not be available until after the restart.%n%nWould you like to restart now?
+english.RestartCancelledMsg=Restart skipped.%n%nWSL2 is not yet active. Please restart your computer manually,%nthen run this installer again.
 
-chinesesimplified.RestartPrompt=WSL2 已成功启用。%n%n需要重启电脑才能完成配置。%n%n是否立即重启？
-chinesesimplified.RestartCancelledMsg=已跳过重启。%n%n请手动重启电脑以完成 WSL2 配置，%n重启后再次运行本安装程序。
+chinesesimplified.RestartPrompt=WSL2 功能已配置，重启后才会正式生效。%n%n重启完成前 WSL2 尚不可用。%n%n是否立即重启？
+chinesesimplified.RestartCancelledMsg=已跳过重启。%n%nWSL2 尚未激活，请手动重启电脑，%n重启完成后再次运行本安装程序。
 
 ; ----- Error / warning messages  (%1 = runtime parameter) -----
 english.ErrOSVersion=Your operating system is not supported.%n%nWindows 10 2004 (Build 19041) or later is required.%nPlease update Windows and run the installer again.
@@ -200,8 +202,15 @@ var
   // used to prevent re-running the enable flow if the user declines
   // the restart and then clicks Next again.
   WSL2Triggered : Boolean;
+  // True when wsl --install --no-distribution failed and we fell back to DISM.
+  // Used to decide whether to show the Win10 manual-kernel-update note:
+  // if wsl --install succeeded (and wsl --update ran), the kernel is already
+  // installed and the note would be misleading.
+  UsedDismFallback : Boolean;
 
-// Ask user to restart; one confirmation before executing
+// Ask user to restart; one confirmation before executing.
+// If the user declines, show the "restart manually" message then exit
+// immediately — leaving the user stranded on the welcome page is confusing.
 procedure ShowRestartPrompt;
 var
   RC: Integer;
@@ -209,8 +218,12 @@ begin
   if MsgBox(CustomMessage('RestartPrompt'), mbConfirmation, MB_YESNO) = IDYES then
     Exec(SysPath('shutdown.exe'), '/r /t 0 /c "WSL2 enabled — restarting for CP2K setup."',
       '', SW_HIDE, ewWaitUntilTerminated, RC)
-  else
+  else begin
     MsgBox(CustomMessage('RestartCancelledMsg'), mbInformation, MB_OK);
+    // Close the installer so the user is not left staring at the welcome page
+    // with no clear next action.  They will re-run setup after a manual restart.
+    ExitProcess(0);
+  end;
 end;
 
 // ────────────────────────────────────────────────
@@ -281,7 +294,10 @@ begin
       CustomMessage('CheckingWSLTitle'),
       CustomMessage('CheckingWSLDesc')
     );
-    ProgressPage.SetProgress(0, 100);
+    // Set to 50 % so the bar looks "in progress" rather than empty/frozen.
+    // TOutputProgressWizardPage has no marquee/indeterminate mode, so a
+    // mid-point value is the best we can do for a short blocking check.
+    ProgressPage.SetProgress(50, 100);
     ProgressPage.Show;
 
     // IsWSL2Ready tries wsl --version (Store/2.x) then wsl --status (in-box).
@@ -325,6 +341,8 @@ begin
           // does NOT install the WSL2 Linux kernel.  After reboot the user must
           // manually install the kernel MSI from https://aka.ms/wsl2kernel
           // (Windows 11 gets the kernel automatically via Windows Update).
+          UsedDismFallback := True;
+
           ProgressPage.SetText(
             CustomMessage('EnablingWSLTitle'),
             CustomMessage('EnablingWSLStep2')
@@ -347,10 +365,24 @@ begin
 
         end;
 
-        // ── Always: set WSL2 as the default version ──
+        // ── Always: update the WSL Store package & kernel ──
+        // `wsl --install --no-distribution` enables the Windows features but
+        // doesn't always deliver the latest WSL Store package / kernel.
+        // `wsl --update` fetches it explicitly, which is what makes
+        // `wsl --version` succeed after the reboot.
         ProgressPage.SetText(
           CustomMessage('EnablingWSLTitle'),
           CustomMessage('EnablingWSLStep4')
+        );
+        ProgressPage.SetProgress(70, 100);
+        Exec(SysPath('wsl.exe'), '--update',
+          '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+        SetForegroundWindow(WizardForm.Handle);
+
+        // ── Always: set WSL2 as the default version ──
+        ProgressPage.SetText(
+          CustomMessage('EnablingWSLTitle'),
+          CustomMessage('EnablingWSLStep5')
         );
         ProgressPage.SetProgress(90, 100);
         Exec(SysPath('wsl.exe'), '--set-default-version 2',
@@ -360,11 +392,14 @@ begin
         ProgressPage.SetProgress(100, 100);
         ProgressPage.Hide;
 
-        // Windows 11 starts at Build 22000 ($55F0).
-        // On Windows 10 (Build < 22000), DISM alone is not enough —
-        // warn the user they need the kernel update package after rebooting.
+        // On Windows 10 (Build < 22000) when only DISM was available,
+        // the WSL2 Linux kernel is NOT installed by DISM — the user must
+        // download it manually from https://aka.ms/wsl2kernel after rebooting.
+        // We only show this note when the DISM fallback was actually used:
+        // if wsl --install succeeded (and wsl --update ran), the kernel is
+        // already present and showing this note would mislead the user.
         // Shown AFTER the progress page is hidden so dialogs don't overlap.
-        if GetWindowsVersion < $0A0055F0 then
+        if UsedDismFallback and (GetWindowsVersion < $0A0055F0) then
           MsgBox(CustomMessage('ErrWSL2KernelNote'), mbInformation, MB_OK);
 
         // Ask user to restart (one confirmation required)
@@ -427,6 +462,10 @@ begin
     // the call also "fails" harmlessly when no such distro is registered.
     Exec(SysPath('wsl.exe'), '--unregister CP2K',
       '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+
+    // Nudge the bar to 5 % so it is visibly non-zero while the import runs
+    // (wsl --import can take 2-4 minutes and we have no sub-step progress).
+    ProgressPage.SetProgress(5, 100);
 
     // Explicit --version 2 ensures the distro is imported as WSL2 even if
     // the default version isn't set to 2 (wsl --set-default-version may have
