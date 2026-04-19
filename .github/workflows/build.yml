@@ -45,10 +45,18 @@ jobs:
 
           # 创建全局软链接，所有 shell 中均可直接使用 cp2k 命令
           ln -sf /opt/conda/bin/cp2k /usr/local/bin/cp2k
-          # 同时写入 profile.d，保证交互式 shell PATH 和数据目录正常
+          # /etc/profile.d 覆盖登录 shell（bash -l）
           echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/cp2k.sh
           echo 'export CP2K_DATA_DIR=/opt/conda/share/cp2k/data' >> /etc/profile.d/cp2k.sh
           chmod +x /etc/profile.d/cp2k.sh
+          # /etc/bash.bashrc 覆盖非登录交互式 shell（`wsl -d CP2K --cd` 默认走此路径）
+          # 以免用户在桌面快捷方式启动的 shell 里找不到 cp2k 或 CP2K_DATA_DIR
+          if ! grep -q 'CP2K_DATA_DIR' /etc/bash.bashrc 2>/dev/null; then
+            echo '' >> /etc/bash.bashrc
+            echo '# CP2K environment' >> /etc/bash.bashrc
+            echo 'export PATH=/opt/conda/bin:$PATH' >> /etc/bash.bashrc
+            echo 'export CP2K_DATA_DIR=/opt/conda/share/cp2k/data' >> /etc/bash.bashrc
+          fi
 
           # 验证安装
           cp2k --version
