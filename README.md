@@ -99,7 +99,7 @@ A **CP2K** shortcut will appear on your desktop after installation.
   ```
   cp2k -i yourfile.inp
   ```
-  The shell opens in your Windows user home directory (`C:\Users\<you>`), so files on your Desktop or in Documents are easy to reach.
+  The shell tries to open in your Windows user home directory (`C:\Users\<you>`). If that path cannot be resolved inside WSL, it falls back to the Linux home directory.
 
 ---
 
@@ -107,6 +107,9 @@ A **CP2K** shortcut will appear on your desktop after installation.
 
 **Q: The installer says "virtualisation needs to be enabled"?**
 Restart, press `Del` or `F2` to enter BIOS, find `Virtualization Technology`, set it to `Enabled`, save and restart.
+
+**Q: The installer enabled WSL2 but the import still fails after reboot?**
+Make sure Windows has fully restarted and finished applying the optional-feature changes. On Windows 10, you may also need to install the WSL2 Linux kernel update package: `https://aka.ms/wsl2kernel`
 
 **Q: My antivirus flagged the installer — is it safe?**
 Temporarily disable real-time protection before installing, then re-enable it afterwards. WSL2 import operations are sometimes mis-flagged.
@@ -146,9 +149,8 @@ cp2k-windows-installer/
 │   ├── cp2k_setup.iss         # Inno Setup installer script (bilingual EN/ZH)
 │   └── cp2k.ico               # Application icon (multi-resolution)
 ├── scripts/
-│   ├── cp2k_shell.bat         # CP2K shell launcher (opens WSL, starts in user home)
+│   ├── cp2k_shell.bat         # CP2K shell launcher (tries Windows home, falls back to Linux home)
 │   ├── run_cp2k.bat           # Command-line calculation runner
-│   └── uninstall_wsl.ps1      # Uninstall helper script
 └── README.md
 ```
 
@@ -237,7 +239,7 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
 - **安装前自动检查**
   - Windows 版本是否满足要求（需 Win10 2004 或更高）
   - C 盘是否有足够空间（至少 6GB）
-  - WSL2 是否已启用（未启用会自动帮你开启）
+  - WSL2 是否已启用（未启用会自动帮你开启，并提示重启）
 
 - **安装中实时进度**
   - 步骤 1/3：导入 CP2K 运行环境（约 2-4 分钟）
@@ -245,7 +247,8 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
   - 步骤 3/3：清理临时文件
 
 - **安装失败时**
-  - 弹出提示框，说明具体原因和解决步骤
+  - 尽量区分是 Windows 功能启用失败、WSL2 尚未就绪，还是导入运行环境失败
+  - Windows 10 如缺少 WSL2 内核更新包，也会提示额外处理步骤
 
 ---
 
@@ -271,7 +274,7 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
   ```
   cp2k -i 你的文件.inp
   ```
-  Shell 启动后自动定位到你的 Windows 用户主目录（`C:\Users\用户名`），桌面和文档里的文件可以直接访问。
+  Shell 会优先定位到你的 Windows 用户主目录（`C:\Users\用户名`）；如果该路径在 WSL 中无法解析，则会回退到 Linux 用户主目录。
 
 ---
 
@@ -279,6 +282,9 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
 
 **Q：安装时提示"需要启用虚拟化"？**
 重启电脑，开机按 `Del` 或 `F2` 进入 BIOS，找到 `Virtualization Technology`，改为 `Enabled` 保存重启。
+
+**Q：安装器提示已启用 WSL2，但重启后仍然导入失败？**
+请先确认 Windows 已经真正完成重启，并且可选功能修改已应用完成。如果你使用的是 Windows 10，还可能需要手动安装 WSL2 Linux 内核更新包：`https://aka.ms/wsl2kernel`
 
 **Q：杀毒软件报警怎么办？**
 安装前临时关闭杀毒软件的实时防护，安装完成后再开启。WSL2 的导入操作有时会被误报。
@@ -318,9 +324,8 @@ cp2k-windows-installer/
 │   ├── cp2k_setup.iss         # Inno Setup 安装包脚本（中英双语界面）
 │   └── cp2k.ico               # 应用程序图标（多分辨率）
 ├── scripts/
-│   ├── cp2k_shell.bat         # CP2K 命令行启动脚本（启动于用户主目录）
+│   ├── cp2k_shell.bat         # CP2K 命令行启动脚本（优先进入 Windows 主目录，失败回退到 Linux 主目录）
 │   ├── run_cp2k.bat           # 命令行计算运行脚本
-│   └── uninstall_wsl.ps1      # 卸载辅助脚本
 └── README.md
 ```
 
