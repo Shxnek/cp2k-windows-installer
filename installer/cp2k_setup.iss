@@ -70,7 +70,7 @@ chinesesimplified.RestartCancelledMsg=已跳过重启。%n%nWSL2 尚未激活，
 ; ----- Error / warning messages  (%1 = runtime parameter) -----
 english.ErrOSVersion=Your operating system is not supported.%n%nWindows 10 2004 (Build 19041) or later is required.%nPlease update Windows and run the installer again.
 english.ErrDiskSpace=Insufficient disk space.%n%nAt least 6 GB of free space on drive C is required.%nCurrent free space: %1 GB%n%nPlease free up space and retry. Continue anyway?
-english.ErrWSL2Prompt=WSL2 not detected.%n%nCP2K requires the Windows Subsystem for Linux (WSL2).%nClick Yes to enable WSL2 automatically.%n%nA console window will open and show live output of the enabling commands.%nIt closes automatically when done (about 1–3 minutes). DO NOT close it manually.%n%nYour computer will restart afterwards, and the installer will resume on its own.
+english.ErrWSL2Prompt=WSL2 not detected.%n%nCP2K requires the Windows Subsystem for Linux (WSL2).%nClick Yes to enable WSL2 automatically.%n%nA console window will open and run the following commands:%n  dism  - Enable Windows Subsystem for Linux%n  dism  - Enable Virtual Machine Platform%n  wsl   - Set default version to 2%nThis takes about 1–2 minutes. Press any key to close it when done.%n%nYour computer will restart afterwards, and the installer will resume on its own.
 english.ErrWSL2PendingRestart=WSL2 has already been enabled in this session.%n%nPlease restart your computer first, then run this installer again.
 english.ErrWSL2KernelNote=Additional step required for Windows 10:%n%nAfter restarting, download and install the WSL2 Linux kernel update package:%n    https://aka.ms/wsl2kernel%n%nThen run this installer again.
 english.ErrWSL2EnvFail=Failed to import runtime environment (error code: %1).%n%nSuggested fixes:%n  1. Restart your computer and run the installer again%n  2. Enable WSL manually via "Turn Windows features on or off"%n  3. Ensure virtualisation (VT-x / AMD-V) is enabled in BIOS%n%nFor further help visit https://www.cp2k.org
@@ -78,7 +78,7 @@ english.WarnEnvVar=Environment variable configuration failed — this will not a
 
 chinesesimplified.ErrOSVersion=系统版本不符合要求。%n%n需要 Windows 10 2004（Build 19041）或更高版本。%n当前系统版本过低，请先更新 Windows 再安装。
 chinesesimplified.ErrDiskSpace=C 盘可用空间不足。%n%n安装 CP2K 至少需要 6GB 可用空间。%n当前 C 盘剩余空间：%1 GB%n%n建议清理磁盘后重试。是否仍要继续安装？
-chinesesimplified.ErrWSL2Prompt=未检测到 WSL2。%n%nCP2K 需要 Windows 子系统（WSL2）才能运行。%n点击"是"将自动启用 WSL2。%n%n即将弹出命令行窗口，实时显示启用过程的命令输出。%n整个过程约 1-3 分钟，完成后窗口会自动关闭。请勿手动关闭。%n%n随后电脑会自动重启，重启后安装程序会自动继续。
+chinesesimplified.ErrWSL2Prompt=未检测到 WSL2。%n%nCP2K 需要 Windows 子系统（WSL2）才能运行。%n点击"是"将自动启用 WSL2。%n%n即将弹出命令行窗口，依次执行以下命令：%n  dism  - 启用 Windows Subsystem for Linux 功能%n  dism  - 启用 Virtual Machine Platform 功能%n  wsl   - 设置默认版本为 2%n整个过程约 1-2 分钟，完成后按任意键关闭窗口。%n%n随后电脑会自动重启，重启后安装程序会自动继续。
 chinesesimplified.ErrWSL2PendingRestart=本次会话中已启用过 WSL2。%n%n请先重启电脑，重启完成后再次运行本安装程序。
 chinesesimplified.ErrWSL2KernelNote=Windows 10 用户需额外操作：%n%n重启完成后，请下载并安装 WSL2 Linux 内核更新包：%n    https://aka.ms/wsl2kernel%n%n安装完成后再次运行本安装程序。
 chinesesimplified.ErrWSL2EnvFail=运行环境导入失败（错误码：%1）。%n%n请尝试以下解决方法：%n  1. 重启电脑后重新运行安装程序%n  2. 在"开启或关闭 Windows 功能"中手动启用 WSL%n  3. 确认 BIOS 中已开启虚拟化（Virtualization）%n%n如问题持续，请访问 https://www.cp2k.org 获取帮助。
@@ -159,11 +159,6 @@ var
   // prevents re-running the enable flow if the user declines the restart
   // and then clicks Next again.
   WSL2Triggered : Boolean;
-  // True when wsl --install --no-distribution failed and we fell back to DISM.
-  // Controls whether to show the Win10 manual-kernel-update note:
-  // if wsl --install succeeded, the kernel is already installed and the note
-  // would be misleading.  Detected via a flag file written by the batch script.
-  UsedDismFallback : Boolean;
 
 // ────────────────────────────────────────────────
 // Core helper: write a batch script to {tmp}, then run it in a VISIBLE cmd
@@ -195,26 +190,22 @@ end;
 
 // ────────────────────────────────────────────────
 // Generate + run the WSL2 enabling batch in a visible cmd window.
-// The user sees each wsl/dism command's live output as it runs.
-// A flag file is written if the DISM fallback path was taken.
+// Uses DISM directly (not wsl --install) — DISM is reliable and
+// idempotent on all supported Windows 10/11 builds.
+// Returns True only when the batch ran to completion.
 // ────────────────────────────────────────────────
-// Returns True if the batch ran to completion (done sentinel present).
-// False means either Exec failed to launch OR the user closed the cmd window
-// before it finished — in either case WSL2 is in an unknown state.
 function RunWSLEnableVisible: Boolean;
 var
   Lines: TArrayOfString;
-  FlagPath, DonePath: String;
+  DonePath: String;
   RC: Integer;
 begin
   Result := False;
 
-  FlagPath := ExpandConstant('{tmp}\cp2k_dism_fallback.flag');
-  if FileExists(FlagPath) then DeleteFile(FlagPath);
   DonePath := ExpandConstant('{tmp}\cp2k_enable_done.flag');
   if FileExists(DonePath) then DeleteFile(DonePath);
 
-  SetArrayLength(Lines, 40);
+  SetArrayLength(Lines, 35);
   Lines[ 0] := '@echo off';
   Lines[ 1] := 'chcp 65001 >nul 2>&1';
   Lines[ 2] := 'title CP2K Installer - Enabling WSL2';
@@ -223,57 +214,39 @@ begin
   Lines[ 5] := 'echo.';
   Lines[ 6] := 'echo ==================================================';
   Lines[ 7] := 'echo   CP2K Installer - Enabling WSL2';
-  Lines[ 8] := 'echo   This window shows live command output.';
-  Lines[ 9] := 'echo   It will close automatically when finished.';
-  Lines[10] := 'echo   DO NOT close this window manually.';
-  Lines[11] := 'echo ==================================================';
-  Lines[12] := 'echo.';
-  Lines[13] := 'echo --------------------------------------------------';
-  Lines[14] := 'echo [Step 1/3] wsl --install --no-distribution';
-  Lines[15] := 'echo --------------------------------------------------';
-  Lines[16] := 'wsl.exe --install --no-distribution';
-  Lines[17] := 'set INSTALL_RC=%ERRORLEVEL%';
-  Lines[18] := 'if not "%INSTALL_RC%"=="0" (';
-  Lines[19] := '    echo.';
-  Lines[20] := '    echo wsl --install returned %INSTALL_RC% - using DISM fallback';
-  Lines[21] := '    echo --------------------------------------------------';
-  Lines[22] := '    echo [Step 1a/3] Enabling Windows Subsystem for Linux';
-  Lines[23] := '    echo --------------------------------------------------';
-  Lines[24] := '    dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart';
-  Lines[25] := '    echo.';
-  Lines[26] := '    echo --------------------------------------------------';
-  Lines[27] := '    echo [Step 1b/3] Enabling Virtual Machine Platform';
-  Lines[28] := '    echo --------------------------------------------------';
-  Lines[29] := '    dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart';
-  Lines[30] := '    > "' + FlagPath + '" echo 1';
-  Lines[31] := ')';
-  Lines[32] := 'echo.';
-  Lines[33] := 'echo --------------------------------------------------';
-  Lines[34] := 'echo [Step 2/3] wsl --update';
-  Lines[35] := 'echo --------------------------------------------------';
-  // Non-fatal: on offline / already-up-to-date systems `wsl --update` prints
-  // a scary-looking error. Mark it as skipped rather than let it look failed.
-  Lines[36] := 'wsl.exe --update || echo (update step skipped - non-fatal)';
-  Lines[37] := 'echo.';
-  Lines[38] := 'echo --------------------------------------------------';
-  Lines[39] := 'echo [Step 3/3] wsl --set-default-version 2';
-  SetArrayLength(Lines, 46);
-  Lines[40] := 'echo --------------------------------------------------';
-  Lines[41] := 'wsl.exe --set-default-version 2';
-  Lines[42] := 'echo.';
-  Lines[43] := 'echo ==================================================';
-  Lines[44] := 'echo   All steps completed. Closing in 5 seconds...';
-  Lines[45] := 'echo ==================================================';
-  SetArrayLength(Lines, 49);
-  // Done-sentinel file: if this does NOT exist after Exec returns, the user
-  // closed the cmd window early and WSL2 is in an unknown state.
-  Lines[46] := '> "' + DonePath + '" echo done';
-  // /nobreak prevents the countdown being skipped by accidental keypress.
-  Lines[47] := 'timeout /t 5 /nobreak >nul';
-  Lines[48] := 'exit /b 0';
+  Lines[ 8] := 'echo   Each command output is shown below.';
+  Lines[ 9] := 'echo   Press any key to close when done reading.';
+  Lines[10] := 'echo ==================================================';
+  Lines[11] := 'echo.';
+  Lines[12] := 'echo --------------------------------------------------';
+  Lines[13] := 'echo [Step 1/3]  Enable: Windows Subsystem for Linux';
+  Lines[14] := 'echo --------------------------------------------------';
+  Lines[15] := 'dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart';
+  Lines[16] := 'echo.';
+  Lines[17] := 'echo --------------------------------------------------';
+  Lines[18] := 'echo [Step 2/3]  Enable: Virtual Machine Platform';
+  Lines[19] := 'echo --------------------------------------------------';
+  Lines[20] := 'dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart';
+  Lines[21] := 'echo.';
+  Lines[22] := 'echo --------------------------------------------------';
+  Lines[23] := 'echo [Step 3/3]  Set WSL default version to 2';
+  Lines[24] := 'echo --------------------------------------------------';
+  Lines[25] := 'wsl.exe --set-default-version 2';
+  Lines[26] := 'echo.';
+  Lines[27] := 'echo   (Optional) Updating WSL kernel from Windows Store...';
+  Lines[28] := 'wsl.exe --update || echo   (WSL kernel update skipped - non-critical)';
+  Lines[29] := 'echo.';
+  // Done-sentinel: if missing after Exec returns, the user closed the window early.
+  Lines[30] := '> "' + DonePath + '" echo done';
+  Lines[31] := 'echo ==================================================';
+  Lines[32] := 'echo   All steps finished. Press any key to continue.';
+  Lines[33] := 'echo ==================================================';
+  // pause (without >nul) shows "Press any key to continue..." so the user
+  // knows to interact. This also prevents the "window flashes and vanishes"
+  // problem on systems where all commands complete in under a second.
+  Lines[34] := 'pause';
 
   if not RunVisibleBatch(Lines, 'cp2k_enable_wsl.bat', RC) then begin
-    // Exec itself failed (permission / AV / missing cmd.exe).
     MsgBox('Failed to launch the WSL2 enabling console window.' + #13#10 +
            'Please check your antivirus / execution policy and retry.',
            mbError, MB_OK);
@@ -285,7 +258,6 @@ begin
     Exit;
   end;
 
-  UsedDismFallback := FileExists(FlagPath);
   Result := True;
 end;
 
@@ -479,10 +451,10 @@ begin
   // premature close would trap the user in the "restart pending" dead-end.
   WSL2Triggered := True;
 
-  // Windows 11 starts at Build 22000 ($55F0).  On Win10, if we had to fall
-  // back to DISM (no modern `wsl --install`), the kernel was NOT auto-
-  // installed — point the user at the manual kernel MSI.
-  if UsedDismFallback and (GetWindowsVersion < $0A0055F0) then
+  // Windows 11 starts at Build 22000 ($55F0).  On Windows 10 we always use
+  // DISM, which does NOT install the WSL2 kernel — point the user at the
+  // manual kernel MSI if wsl --update didn't handle it automatically.
+  if GetWindowsVersion < $0A0055F0 then
     MsgBox(CustomMessage('ErrWSL2KernelNote'), mbInformation, MB_OK);
 
   ShowRestartPrompt;
