@@ -65,7 +65,7 @@ jobs:
 
           echo "Installing CP2K toolchain dependencies..."
           cd "${CP2K_WORK_ROOT}/tools/toolchain"
-          ./install_cp2k_toolchain.sh --mpi-mode=mpich -j 4
+          ./install_cp2k_toolchain.sh --install-all --mpi-mode=mpich -j 4
 
           if [ ! -f "${CP2K_TOOLCHAIN_ROOT}/setup" ] || [ ! -f "${CP2K_TOOLCHAIN_ROOT}/arch/local.psmp" ]; then
             echo "CP2K toolchain did not produce the expected setup files."
