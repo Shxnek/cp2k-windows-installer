@@ -7,7 +7,7 @@
 > CP2K is a professional scientific software for quantum chemistry and solid-state physics simulations.
 > This project packages CP2K **2026.1** (latest) as a Windows one-click installer — no technical background required, just double-click to install.
 >
-> Powered by **Ubuntu 24.04 WSL2 + conda-forge**.
+> Powered by **Ubuntu 24.04 WSL2 + source-built CP2K 2026.1**.
 
 ---
 
@@ -132,7 +132,7 @@ To build from source (e.g. to update the CP2K version):
 1. Fork this repository
 2. Go to **Actions → Build CP2K Windows Installer**
 3. Click **Run workflow** on the right
-4. Wait ~30–40 minutes (conda-forge download included); download the result from the Artifacts section
+4. Wait for the workflow to finish (it now compiles CP2K 2026.1 from source inside WSL); download the result from the Artifacts section
 
 Completely free — GitHub provides 2,000 free build minutes per month.
 
@@ -144,7 +144,7 @@ Completely free — GitHub provides 2,000 free build minutes per month.
 cp2k-windows-installer/
 ├── .github/workflows/
 │   └── build.yml              # Automated build pipeline (GitHub Actions)
-│                              # Uses Ubuntu 24.04 WSL2 + conda-forge cp2k 2026.1
+│                              # Uses Ubuntu 24.04 WSL2 + source-built CP2K 2026.1
 ├── installer/
 │   ├── cp2k_setup.iss         # Inno Setup installer script (bilingual EN/ZH)
 │   └── cp2k.ico               # Application icon (multi-resolution)
@@ -181,7 +181,7 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
 > CP2K 是一款用于量子化学和固体物理计算的专业科学软件。
 > 本项目将 **CP2K 2026.1**（最新版）打包为 Windows 一键安装程序，无需任何技术背景，双击即可完成安装。
 >
-> 基于 **Ubuntu 24.04 WSL2 + conda-forge** 构建。
+> 基于 **Ubuntu 24.04 WSL2 + CP2K 2026.1 源码构建**。
 
 ---
 
@@ -228,7 +228,7 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
         └────────── 确认无误后提交 ────────────┘
 ```
 
-> **最佳实践：** 把 WSL2 + conda CP2K 定位成**开发和测试环境**，而不是生产计算环境，是最合理的使用方式。
+> **最佳实践：** 把 WSL2 + 本地 CP2K 环境定位成**开发和测试环境**，而不是生产计算环境，是最合理的使用方式。
 
 ---
 
@@ -307,7 +307,7 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
 1. Fork 本仓库
 2. 进入 **Actions → Build CP2K Windows Installer / 打包 CP2K Windows 安装程序**
 3. 点击右侧 **Run workflow**
-4. 等待约 30-40 分钟（含 conda-forge 下载），完成后在 Artifacts 区域下载
+4. 等待工作流完成（现在会在 WSL 内源码编译 CP2K 2026.1），完成后在 Artifacts 区域下载
 
 全程免费，GitHub 每月提供 2000 分钟免费构建时间。
 
@@ -319,7 +319,7 @@ CP2K itself is licensed under the [GPL-2.0 License](https://github.com/cp2k/cp2k
 cp2k-windows-installer/
 ├── .github/workflows/
 │   └── build.yml              # 自动打包流程（GitHub Actions）
-│                              # 基于 Ubuntu 24.04 WSL2 + conda-forge cp2k 2026.1
+│                              # 基于 Ubuntu 24.04 WSL2 + CP2K 2026.1 源码构建
 ├── installer/
 │   ├── cp2k_setup.iss         # Inno Setup 安装包脚本（中英双语界面）
 │   └── cp2k.ico               # 应用程序图标（多分辨率）

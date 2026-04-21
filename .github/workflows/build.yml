@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest  # 使用 GitHub 提供的免费 Windows 虚拟机
+    runs-on: windows-2022  # 固定 runner，减少宿主环境漂移
 
     steps:
       # ── 第1步：下载代码 ──
@@ -23,39 +23,109 @@ jobs:
           distribution: Ubuntu-24.04
           use-cache: 'false'
 
-      # ── 第3步：通过 conda-forge 安装 CP2K 2026.1（最新版）──
-      # apt 仓库的 cp2k 版本过旧，conda-forge 提供跨发行版的最新预编译包
-      - name: 安装 CP2K 2026.1（conda-forge）/ Install CP2K 2026.1
+      # ── 第3步：源码构建 CP2K 2026.1 ──
+      # conda-forge 预编译包在 GitHub Actions 的 WSL 环境中出现 SIGILL，
+      # 这里改为下载官方 2026.1 release 源码并在 Ubuntu 24.04 内构建。
+      - name: 源码构建 CP2K 2026.1 / Build CP2K 2026.1 from source
         shell: wsl-bash {0}
         run: |
           apt-get update -qq
-          apt-get install -y wget
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            build-essential \
+            bzip2 \
+            ca-certificates \
+            gfortran \
+            git \
+            pkg-config \
+            python3 \
+            wget
 
-          # 安装 Miniforge（轻量级 conda，专为 conda-forge 优化）
-          echo "Installing Miniforge..."
-          wget -q \
-            "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh" \
-            -O /tmp/miniforge.sh
-          bash /tmp/miniforge.sh -b -p /opt/conda
-          rm /tmp/miniforge.sh
+          CP2K_VERSION=2026.1
+          CP2K_TAG="v${CP2K_VERSION}"
+          CP2K_TARBALL="cp2k-${CP2K_VERSION}.tar.bz2"
+          CP2K_URL="https://github.com/cp2k/cp2k/releases/download/${CP2K_TAG}/${CP2K_TARBALL}"
+          CP2K_WORK_ROOT="/opt/cp2k-source"
+          CP2K_RUNTIME_ROOT="/opt/cp2k"
+          CP2K_TOOLCHAIN_ROOT="${CP2K_WORK_ROOT}/tools/toolchain/install"
 
-          # 从 conda-forge 安装 CP2K 2026.1
-          echo "Installing CP2K 2026.1 from conda-forge..."
-          /opt/conda/bin/conda install -y -c conda-forge cp2k=2026.1
+          echo "Downloading CP2K ${CP2K_VERSION} sources..."
+          wget -q "${CP2K_URL}" -O "/tmp/${CP2K_TARBALL}"
+
+          rm -rf "${CP2K_WORK_ROOT}" "${CP2K_RUNTIME_ROOT}" "/opt/cp2k-${CP2K_VERSION}"
+          mkdir -p "${CP2K_RUNTIME_ROOT}/bin" "${CP2K_RUNTIME_ROOT}/data" "${CP2K_RUNTIME_ROOT}/toolchain"
+
+          tar -xjf "/tmp/${CP2K_TARBALL}" -C /opt
+          mv "/opt/cp2k-${CP2K_VERSION}" "${CP2K_WORK_ROOT}"
+
+          cd "${CP2K_WORK_ROOT}"
+          if [ ! -x ./tools/toolchain/install_cp2k_toolchain.sh ]; then
+            echo "install_cp2k_toolchain.sh was not found in the CP2K ${CP2K_VERSION} release."
+            exit 1
+          fi
+
+          echo "Installing CP2K toolchain dependencies..."
+          cd "${CP2K_WORK_ROOT}/tools/toolchain"
+          ./install_cp2k_toolchain.sh --mpi-mode=mpich -j 4
+
+          if [ ! -f "${CP2K_TOOLCHAIN_ROOT}/setup" ] || [ ! -f "${CP2K_TOOLCHAIN_ROOT}/arch/local.psmp" ]; then
+            echo "CP2K toolchain did not produce the expected setup files."
+            exit 1
+          fi
+
+          echo "Compiling CP2K ${CP2K_VERSION}..."
+          . "${CP2K_TOOLCHAIN_ROOT}/setup"
+          cd "${CP2K_WORK_ROOT}"
+          cp "${CP2K_TOOLCHAIN_ROOT}/arch/local.psmp" arch/
+          make -j 4 ARCH=local VERSION=psmp
+
+          if [ ! -x "${CP2K_WORK_ROOT}/exe/local/cp2k.psmp" ]; then
+            echo "Built cp2k binary was not found at exe/local/cp2k.psmp."
+            find "${CP2K_WORK_ROOT}" -maxdepth 4 -type f -name 'cp2k*' || true
+            exit 1
+          fi
+
+          install -Dm755 "${CP2K_WORK_ROOT}/exe/local/cp2k.psmp" "${CP2K_RUNTIME_ROOT}/bin/cp2k"
+          cp -a "${CP2K_WORK_ROOT}/data/." "${CP2K_RUNTIME_ROOT}/data/"
+          cp -a "${CP2K_TOOLCHAIN_ROOT}/." "${CP2K_RUNTIME_ROOT}/toolchain/"
+          sed "s|${CP2K_TOOLCHAIN_ROOT}|/opt/cp2k/toolchain|g" \
+            "${CP2K_TOOLCHAIN_ROOT}/setup" > "${CP2K_RUNTIME_ROOT}/toolchain/setup"
+          if grep -Fq "${CP2K_WORK_ROOT}" "${CP2K_RUNTIME_ROOT}/toolchain/setup"; then
+            echo "The packaged toolchain setup script still references the temporary build tree."
+            exit 1
+          fi
 
           # 创建全局软链接，所有 shell 中均可直接使用 cp2k 命令
-          ln -sf /opt/conda/bin/cp2k /usr/local/bin/cp2k
+          ln -sf /opt/cp2k/bin/cp2k /usr/local/bin/cp2k
           # /etc/profile.d 覆盖登录 shell（bash -l）
-          echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/cp2k.sh
-          echo 'export CP2K_DATA_DIR=/opt/conda/share/cp2k/data' >> /etc/profile.d/cp2k.sh
+          cat > /etc/profile.d/cp2k.sh <<'EOF'
+          if [ -f /opt/cp2k/toolchain/setup ]; then
+            . /opt/cp2k/toolchain/setup >/dev/null 2>&1 || true
+          fi
+          export PATH=/opt/cp2k/bin:$PATH
+          export CP2K_DATA_DIR=/opt/cp2k/data
+          export LD_LIBRARY_PATH=/opt/cp2k/toolchain/lib:/opt/cp2k/toolchain/lib64:${LD_LIBRARY_PATH:-}
+          EOF
           chmod +x /etc/profile.d/cp2k.sh
+          : > /etc/ld.so.conf.d/cp2k.conf
+          for libdir in /opt/cp2k/toolchain/lib /opt/cp2k/toolchain/lib64; do
+            if [ -d "${libdir}" ]; then
+              echo "${libdir}" >> /etc/ld.so.conf.d/cp2k.conf
+            fi
+          done
+          ldconfig
           # /etc/bash.bashrc 覆盖非登录交互式 shell（`wsl -d CP2K --cd` 默认走此路径）
           # 以免用户在桌面快捷方式启动的 shell 里找不到 cp2k 或 CP2K_DATA_DIR
           if ! grep -q 'CP2K_DATA_DIR' /etc/bash.bashrc 2>/dev/null; then
-            echo '' >> /etc/bash.bashrc
-            echo '# CP2K environment' >> /etc/bash.bashrc
-            echo 'export PATH=/opt/conda/bin:$PATH' >> /etc/bash.bashrc
-            echo 'export CP2K_DATA_DIR=/opt/conda/share/cp2k/data' >> /etc/bash.bashrc
+            cat >> /etc/bash.bashrc <<'EOF'
+
+          # CP2K environment
+          if [ -f /opt/cp2k/toolchain/setup ]; then
+            . /opt/cp2k/toolchain/setup >/dev/null 2>&1 || true
+          fi
+          export PATH=/opt/cp2k/bin:$PATH
+          export CP2K_DATA_DIR=/opt/cp2k/data
+          export LD_LIBRARY_PATH=/opt/cp2k/toolchain/lib:/opt/cp2k/toolchain/lib64:${LD_LIBRARY_PATH:-}
+          EOF
           fi
 
           # 验证安装
@@ -92,26 +162,27 @@ jobs:
           )
           Write-Host "Version injected into $batPath successfully (UTF-8 no BOM)"
 
-      # ── 第3.6步：清理 conda 缓存，减小镜像体积 ──
+      # ── 第3.6步：清理源码构建缓存，减小镜像体积 ──
       - name: 清理缓存，减小镜像体积 / Clean up cache to reduce image size
         shell: wsl-bash {0}
         run: |
           echo "清理前磁盘占用 / Disk usage before cleanup:"
-          du -sh /opt/conda 2>/dev/null || true
-
-          # 清理 conda 包缓存（安装完后不再需要）
-          /opt/conda/bin/conda clean --all -y
+          du -sh /opt/cp2k 2>/dev/null || true
+          du -sh /opt/cp2k-source 2>/dev/null || true
 
           # 清理 apt 缓存
           apt-get clean
           rm -rf /var/lib/apt/lists/*
 
-          # 清理临时文件和编译缓存
+          # 删除源码树和中间构建产物，只保留运行时文件
+          rm -rf /opt/cp2k-source
+
+          # 清理临时文件和缓存
           rm -rf /tmp/*
           rm -rf /root/.cache
 
           echo "清理后磁盘占用 / Disk usage after cleanup:"
-          du -sh /opt/conda 2>/dev/null || true
+          du -sh /opt/cp2k 2>/dev/null || true
 
       # ── 第4步：导出 WSL 镜像 ──
       - name: 导出 WSL 镜像
