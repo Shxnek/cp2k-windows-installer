@@ -10,22 +10,28 @@ on:
 jobs:
   build:
     runs-on: windows-2022  # 固定 runner，减少宿主环境漂移
+    env:
+      WSL_DISTRO: Ubuntu-22.04
+      CP2K_VERSION: 2026.1
+      TOOLCHAIN_JOBS: 4
+      MAKE_JOBS: 4
 
     steps:
       # ── 第1步：下载代码 ──
       - name: 下载代码
         uses: actions/checkout@v4
 
-      # ── 第2步：设置 WSL2 + Ubuntu 24.04 ──
-      - name: 安装 WSL2 和 Ubuntu 24.04
+      # ── 第2步：设置 WSL2 + Ubuntu 22.04 ──
+      - name: 安装 WSL2 和 Ubuntu 22.04
         uses: Vampire/setup-wsl@v3
         with:
-          distribution: Ubuntu-24.04
+          distribution: ${{ env.WSL_DISTRO }}
           use-cache: 'false'
+          update: 'true'
 
-      # ── 第3步：源码构建 CP2K 2026.1 ──
+      # ── 第3步：源码构建 CP2K 2026.1（Ubuntu 22.04 + 官方 toolchain）──
       # conda-forge 预编译包在 GitHub Actions 的 WSL 环境中出现 SIGILL，
-      # 这里改为下载官方 2026.1 release 源码并在 Ubuntu 24.04 内构建。
+      # 这里改为下载官方 2026.1 release 源码并在 Ubuntu 22.04 内构建。
       - name: 源码构建 CP2K 2026.1 / Build CP2K 2026.1 from source
         shell: wsl-bash {0}
         run: |
@@ -36,23 +42,35 @@ jobs:
             build-essential \
             bzip2 \
             ca-certificates \
+            file \
             gfortran \
+            gzip \
             git \
             libtool \
             m4 \
+            make \
             patch \
             perl \
             pkg-config \
             python3 \
-            wget
+            unzip \
+            wget \
+            xz-utils
 
-          CP2K_VERSION=2026.1
           CP2K_TAG="v${CP2K_VERSION}"
           CP2K_TARBALL="cp2k-${CP2K_VERSION}.tar.bz2"
           CP2K_URL="https://github.com/cp2k/cp2k/releases/download/${CP2K_TAG}/${CP2K_TARBALL}"
           CP2K_WORK_ROOT="/opt/cp2k-source"
           CP2K_RUNTIME_ROOT="/opt/cp2k"
           CP2K_TOOLCHAIN_ROOT="${CP2K_WORK_ROOT}/tools/toolchain/install"
+
+          echo "Bootstrap environment checks..."
+          gfortran --version | head -n 1
+          python3 --version
+          unzip -v | head -n 2
+          which make wget tar unzip
+          nproc
+          df -h /
 
           echo "Downloading CP2K ${CP2K_VERSION} sources..."
           wget -q "${CP2K_URL}" -O "/tmp/${CP2K_TARBALL}"
@@ -71,7 +89,23 @@ jobs:
 
           echo "Installing CP2K toolchain dependencies..."
           cd "${CP2K_WORK_ROOT}/tools/toolchain"
-          ./install_cp2k_toolchain.sh --install-all --mpi-mode=mpich -j 4
+          if ! ./install_cp2k_toolchain.sh --install-all --mpi-mode=mpich -j "${TOOLCHAIN_JOBS}"; then
+            echo "::group::CP2K toolchain diagnostics"
+            echo "Toolchain build directory layout:"
+            find "${CP2K_WORK_ROOT}/tools/toolchain/build" -maxdepth 2 -type d | sort || true
+            echo
+            echo "Recent toolchain logs:"
+            find "${CP2K_WORK_ROOT}/tools/toolchain/build" -type f \( -name 'make.log' -o -name '*.log' \) | sort | tail -n 20 || true
+            LAST_LOG="$(find "${CP2K_WORK_ROOT}/tools/toolchain/build" -type f \( -name 'make.log' -o -name '*.log' \) | sort | tail -n 1)"
+            if [ -n "${LAST_LOG}" ] && [ -f "${LAST_LOG}" ]; then
+              echo
+              echo "Last toolchain log: ${LAST_LOG}"
+              echo "--------------------------------------------------"
+              tail -n 200 "${LAST_LOG}" || true
+            fi
+            echo "::endgroup::"
+            exit 1
+          fi
 
           if [ ! -f "${CP2K_TOOLCHAIN_ROOT}/setup" ] || [ ! -f "${CP2K_TOOLCHAIN_ROOT}/arch/local.psmp" ]; then
             echo "CP2K toolchain did not produce the expected setup files."
@@ -82,7 +116,8 @@ jobs:
           . "${CP2K_TOOLCHAIN_ROOT}/setup"
           cd "${CP2K_WORK_ROOT}"
           cp "${CP2K_TOOLCHAIN_ROOT}/arch/local.psmp" arch/
-          make -j 4 ARCH=local VERSION=psmp
+          echo "Using ARCH=local VERSION=psmp"
+          make -j "${MAKE_JOBS}" ARCH=local VERSION=psmp
 
           if [ ! -x "${CP2K_WORK_ROOT}/exe/local/cp2k.psmp" ]; then
             echo "Built cp2k binary was not found at exe/local/cp2k.psmp."
@@ -135,8 +170,9 @@ jobs:
           fi
 
           # 验证安装
+          command -v cp2k
           cp2k --version
-          echo "CP2K 2026.1 installed successfully"
+          echo "CP2K ${CP2K_VERSION} installed successfully"
 
       # ── 第3.5步：将实际 CP2K 版本号注入启动脚本（在清理之前）──
       # 直接从 Windows 侧调用 wsl 查询版本，避免在 wsl-bash 内写 $GITHUB_ENV 的跨环境问题
@@ -144,7 +180,7 @@ jobs:
         shell: powershell
         run: |
           # 从 WSL 直接查询已安装的 CP2K 版本
-          $rawLines = wsl -d Ubuntu-24.04 -- bash -c "cp2k --version 2>/dev/null" 2>$null
+          $rawLines = wsl -d $env:WSL_DISTRO -- bash -c "cp2k --version 2>/dev/null" 2>$null
           if (-not $rawLines) {
             $rawLines = wsl -d Ubuntu -- bash -c "cp2k --version 2>/dev/null" 2>$null
           }
@@ -152,7 +188,7 @@ jobs:
           if ($verLine -match "CP2K version\s+([\d.]+)") {
             $ver = $Matches[1]
           } else {
-            $ver = "2026.1"   # 兜底值
+            $ver = $env:CP2K_VERSION   # 兜底值
           }
           Write-Host "Detected CP2K version: $ver"
 
@@ -196,8 +232,8 @@ jobs:
         run: |
           echo 已安装的 WSL 发行版：
           wsl -l -v
-          echo 尝试导出 Ubuntu-24.04...
-          wsl --export Ubuntu-24.04 cp2k_distro.tar
+          echo 尝试导出 %WSL_DISTRO%...
+          wsl --export %WSL_DISTRO% cp2k_distro.tar
           if exist cp2k_distro.tar goto :success
           echo 尝试导出 Ubuntu...
           wsl --export Ubuntu cp2k_distro.tar
