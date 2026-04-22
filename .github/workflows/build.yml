@@ -35,6 +35,10 @@ jobs:
       - name: 源码构建 CP2K 2026.1 / Build CP2K 2026.1 from source
         shell: wsl-bash {0}
         run: |
+          CP2K_VERSION="${{ env.CP2K_VERSION }}"
+          TOOLCHAIN_JOBS="${{ env.TOOLCHAIN_JOBS }}"
+          MAKE_JOBS="${{ env.MAKE_JOBS }}"
+
           apt-get update -qq
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             autoconf \
