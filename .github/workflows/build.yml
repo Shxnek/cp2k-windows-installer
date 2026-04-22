@@ -31,11 +31,17 @@ jobs:
         run: |
           apt-get update -qq
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            autoconf \
+            automake \
             build-essential \
             bzip2 \
             ca-certificates \
             gfortran \
             git \
+            libtool \
+            m4 \
+            patch \
+            perl \
             pkg-config \
             python3 \
             wget
