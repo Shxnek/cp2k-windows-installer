@@ -51,6 +51,7 @@ jobs:
             gfortran \
             gzip \
             git \
+            libaec-dev \
             libtool \
             m4 \
             make \
@@ -60,7 +61,8 @@ jobs:
             python3 \
             unzip \
             wget \
-            xz-utils
+            xz-utils \
+            zlib1g-dev
 
           CP2K_TAG="v${CP2K_VERSION}"
           CP2K_TARBALL="cp2k-${CP2K_VERSION}.tar.bz2"
