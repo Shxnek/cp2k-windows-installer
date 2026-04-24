@@ -96,7 +96,7 @@ jobs:
 
           echo "Installing CP2K toolchain dependencies..."
           cd "${CP2K_WORK_ROOT}/tools/toolchain"
-          if ! ./install_cp2k_toolchain.sh --install-all --with-cmake=system --with-libtorch=no --with-spla=no --mpi-mode=mpich -j "${TOOLCHAIN_JOBS}"; then
+          if ! ./install_cp2k_toolchain.sh --install-all --with-cmake=system --with-deepmd=no --with-sirius=no --with-libtorch=no --with-spla=no --mpi-mode=mpich -j "${TOOLCHAIN_JOBS}"; then
             echo "::group::CP2K toolchain diagnostics"
             echo "Toolchain build directory layout:"
             find "${CP2K_WORK_ROOT}/tools/toolchain/build" -maxdepth 2 -type d | sort || true
